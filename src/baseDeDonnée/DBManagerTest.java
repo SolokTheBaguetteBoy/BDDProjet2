@@ -1,4 +1,4 @@
-package baseDeDonné;
+package baseDeDonnée;
 
 import static org.junit.Assert.*;
 
@@ -8,7 +8,7 @@ public class DBManagerTest {
 
 	@Test
 	public void test() {
-		DBManager DB = new DBManager();
+		
 	}
 
 }
