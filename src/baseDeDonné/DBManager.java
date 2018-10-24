@@ -3,7 +3,7 @@ package baseDeDonné;
 public class DBManager {
 
 	public DBManager(){
-		System.out.println();
+		System.out.println("Ma b");
 	}
 	
 }
