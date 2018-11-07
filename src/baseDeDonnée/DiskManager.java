@@ -4,12 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 
-import sun.font.CreatedFontTracker;
 import util.Constantes;
 
 public class DiskManager {
@@ -30,6 +27,7 @@ public class DiskManager {
 	
 	public void createFile(int iFileIdx) {
 		File f = new File("DB/Data_" + iFileIdx + ".rf");
+		
 	}
 	
 	public void addPage(int iFileIdx, PageId oPageId) throws IOException {
