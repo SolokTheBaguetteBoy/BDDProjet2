@@ -49,5 +49,4 @@ public class DBDef {
 	public void finish(){
 		
 	}
-	
 }

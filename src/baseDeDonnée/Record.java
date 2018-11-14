@@ -14,6 +14,5 @@ public class Record {
 		this.values = values;
 	}
 	
-	
 
 }

@@ -10,5 +10,4 @@ public class DBManagerTest {
 	public void test() {
 		
 	}
-
 }
