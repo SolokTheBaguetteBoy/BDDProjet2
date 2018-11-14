@@ -10,4 +10,11 @@ public class CoupleEntiers {
 		this.freeSlots = freeSlots;
 	}
 	
+	public int getPageIdx() {
+		return pageIdx;
+	}
+	
+	public int getFreeSlots() {
+		return freeSlots;
+	}
 }

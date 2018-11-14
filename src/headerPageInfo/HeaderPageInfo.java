@@ -30,7 +30,12 @@ public class HeaderPageInfo {
 	}
 	
 	public void writeToBuffer(byte[] buffer) {
-		
+		ByteBuffer b = ByteBuffer.wrap(buffer);
+		b.putInt(dataPageCount);
+		for(int i = 0; i < dataPageCount; i++) {
+			b.putInt(getCoupleEntier(i).getPageIdx());
+			b.putInt(getCoupleEntier(i).getFreeSlots());
+		}
 	}
 	
 }
