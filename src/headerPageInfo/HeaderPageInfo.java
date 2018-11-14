@@ -21,6 +21,10 @@ public class HeaderPageInfo {
 		return couplesEntiers.get(i);
 	}
 	
+	public ArrayList<CoupleEntiers> getCouplesEntier(){
+		return couplesEntiers;
+	}
+	
 	public void readFromBuffer(byte[] buffer) {
 		ByteBuffer b = ByteBuffer.wrap(buffer);
 		dataPageCount = b.getInt();
