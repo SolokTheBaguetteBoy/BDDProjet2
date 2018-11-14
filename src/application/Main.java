@@ -1,5 +1,7 @@
 package application;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 import baseDeDonnée.DBManager;
@@ -7,6 +9,7 @@ import baseDeDonnée.DBManager;
 public class Main {
 
 	public static void main(String[] args){
+		
 		Scanner sc = new Scanner(System.in);
 		String commande = "";
 		DBManager manager = DBManager.getInstance();
@@ -14,10 +17,15 @@ public class Main {
 		while(commande.compareTo("exit") != 0){
 			commande = sc.nextLine();
 			if(commande.compareTo("exit") != 0){ 
-				manager.processCommand(commande);
+				try {
+					manager.processCommand(commande);
+				} catch (NumberFormatException | IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		manager.finish();
+		sc.close();
 	}
 	
 }
