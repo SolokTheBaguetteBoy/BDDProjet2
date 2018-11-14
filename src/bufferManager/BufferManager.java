@@ -21,9 +21,17 @@ public class BufferManager {
 		
 	}
 	
+	public Frame getFrame1() {
+		return bufferPool.get(0);
+	}
+	
+	public Frame getFrame2() {
+		return bufferPool.get(1);
+	}
+	
 	private static BufferManager INSTANCE = null;
 	
-	public BufferManager getInstance() {
+	public static BufferManager getInstance() {
 		if(INSTANCE == null){
 			INSTANCE = new BufferManager();
 		}
@@ -47,6 +55,7 @@ public class BufferManager {
 
 	private byte[] load(PageId pid) {
 		Frame toAdd = new Frame(pid);
+		toAdd.incrementPinCount();
 		if(currentLoadedFrame < frameCount) {
 			currentLoadedFrame++;		
 			bufferPool.add(toAdd);
@@ -54,16 +63,16 @@ public class BufferManager {
 		}
 		else {
 			int frameToReplace = 0;
-			int maxPinCount = 0;
+			int minPinCount = 0;
 			for(int j = 0; j < frameCount; j++) {
-				if(maxPinCount < bufferPool.get(j).getPinCount()) {
-					maxPinCount = bufferPool.get(j).getPinCount();
+				if(minPinCount > bufferPool.get(j).getPinCount()) {
+					minPinCount = bufferPool.get(j).getPinCount();
 					frameToReplace = j;
 				}
-				else if(maxPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(j).getDirty() == false) {
+				else if(minPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(j).getDirty() == false) {
 					frameToReplace = j;
 				}
-				else if(maxPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(frameToReplace).getLastUnpin() > bufferPool.get(j).getLastUnpin()) {
+				else if(minPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(frameToReplace).getLastUnpin() > bufferPool.get(j).getLastUnpin()) {
 					frameToReplace = j;
 				}
 			}
