@@ -1,4 +1,4 @@
-package baseDeDonnée;
+package baseDeDonnee;
 
 import static org.junit.Assert.*;
 

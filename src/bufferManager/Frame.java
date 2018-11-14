@@ -2,7 +2,7 @@ package bufferManager;
 
 import java.util.Date;
 
-import baseDeDonnée.PageId;
+import baseDeDonnee.PageId;
 import util.Constantes;
 
 public class Frame {

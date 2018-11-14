@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
-import baseDeDonnée.DBManager;
+import baseDeDonnee.DBManager;
 
 public class Main {
 

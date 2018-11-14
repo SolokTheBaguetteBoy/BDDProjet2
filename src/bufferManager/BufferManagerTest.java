@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import baseDeDonnée.PageId;
+import baseDeDonnee.PageId;
 
 public class BufferManagerTest {
 

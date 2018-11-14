@@ -3,9 +3,9 @@ package bufferManager;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import baseDeDonnée.DBManager;
-import baseDeDonnée.DiskManager;
-import baseDeDonnée.PageId;
+import baseDeDonnee.DBManager;
+import baseDeDonnee.DiskManager;
+import baseDeDonnee.PageId;
 import util.Constantes;
 
 public class BufferManager {
