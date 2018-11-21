@@ -17,6 +17,9 @@ public class FileManager {
 	private static FileManager INSTANCE = null;
 
 	private FileManager() {
+		
+		heapFileList = new ArrayList<HeapFile>();
+		
 	}
 
 	public static FileManager getInstance() {
@@ -43,7 +46,7 @@ public class FileManager {
 	public Rid insertRecordInRelation(String RelationName, Record Record) {
 		for(HeapFile hp : heapFileList) {
 			if(hp.getRelDef().getNomRelation().equals(RelationName)) {
-				hp.insertRecord();
+				//return hp.insertRecord();
 			}
 		}
 		return new Rid(new PageId(), 0);
