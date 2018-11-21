@@ -1,27 +1,34 @@
 package baseDeDonnee;
 
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 public class DBDef {
 
 	private ArrayList<RelDef> listeRelations;
 	private int compteurRelations;
-	
-	private DBDef(){
+
+	private DBDef() {
 		listeRelations = new ArrayList<RelDef>();
 		compteurRelations = listeRelations.size();
 	}
-	
+
 	private static DBDef INSTANCE = null;
-	
-	public static DBDef getInstance(){
-		if(INSTANCE == null){
+
+	public static DBDef getInstance() {
+		if (INSTANCE == null) {
 			INSTANCE = new DBDef();
 		}
 		return INSTANCE;
 	}
-	
-	public void addRelation(RelDef RD){
+
+	public void addRelation(RelDef RD) {
 		listeRelations.add(RD);
 		compteurRelations++;
 	}
@@ -41,12 +48,67 @@ public class DBDef {
 	public void setCompteurRelations(int compteurRelations) {
 		this.compteurRelations = compteurRelations;
 	}
-	
-	public void init(){
+
+	public void init() {
 		
+		File f = new File("DB/Catalog.def");
+		
+		if (f.exists())
+		{
+			try {
+				
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
+				
+				this.compteurRelations = ois.readInt();
+				
+				boolean finished = false;
+				
+				while (!finished)
+				{
+						Object obj = ois.readObject();
+					
+					if (obj != null)
+					{
+						this.listeRelations.add((RelDef) obj);
+					}
+					else {
+						finished = true;
+					}
+				}
+				
+				ois.close();
+				
+			} catch (EOFException msg) {
+				System.out.println("Fin de lecture");
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			} 
+			
+			/*for (RelDef relDef : listeRelations) {
+				System.out.println(relDef.getFileIdx() + " " + relDef.getNomRelation());
+			}*/
+		}
 	}
-	
-	public void finish(){
-		
+
+	public void finish() {
+
+		File f = new File("DB/Catalog.def");
+
+		try {
+			
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
+			
+			oos.writeInt(compteurRelations);
+
+			for (RelDef relDef : listeRelations) {
+
+				oos.writeObject(relDef);
+			}
+			
+			oos.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

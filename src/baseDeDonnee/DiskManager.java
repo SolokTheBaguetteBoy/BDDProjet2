@@ -72,8 +72,8 @@ public class DiskManager {
 		DiskManager dm = DiskManager.getInstance();
 		byte[] array = new byte[Constantes.pageSize];
 		PageId pid = new PageId();
-		dm.createFile(1);
-		dm.addPage(1, pid);
+		dm.createFile(3);
+		dm.addPage(3, pid);
 		dm.writePage(pid, new byte[]{2,3,4});
 		dm.readPage(pid, array);
 		

@@ -26,6 +26,10 @@ public class RelDef implements Serializable{
 		this.nombreColonne = nombreColonne;
 		this.typesColonne = typesColonne;
 	}
+	
+	public RelDef(){
+		this.typesColonne = new ArrayList<String>();
+	}
 
 	public String getNomRelation() {
 		return nomRelation;
