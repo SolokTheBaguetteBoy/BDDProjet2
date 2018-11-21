@@ -61,17 +61,23 @@ public class DBManager {
 			break;
 			
 		case "clean":
-			File f = new File("DB");
-			for (File c : f.listFiles()) 
-			{
-				System.out.println("deleting file " + c.getName());
-				c.delete();
-			}
+			clean();
 			break;
 			
 		default:
 			System.out.println("Commande non reconnue");
 		}
+	}
+	
+	public void clean() {
+		File f = new File("DB");
+		for (File c : f.listFiles()) 
+		{
+			System.out.println("deleting file " + c.getName());
+			c.delete();
+		}
+		
+		DBDef.getInstance().setCompteurRelations(0);
 	}
 	
 	public void insertRelation(String nomRelation, ArrayList<String> valeurs) {
