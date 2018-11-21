@@ -9,10 +9,12 @@ import headerPageInfo.HeaderPageInfo;
 public class HeapFile {
 	
 	private RelDef listeChainee;
+	
 	private DiskManager dm;
 	private BufferManager bm;
-	public HeapFile() {
+	public HeapFile(RelDef listeChainee) {
 		// TODO Auto-generated constructor stub
+		this.listeChainee = listeChainee;
 		this.dm = DiskManager.getInstance();
 		this.bm = BufferManager.getInstance();
 	}
@@ -35,10 +37,10 @@ public class HeapFile {
 		header.readFromBuffer(buffer);
 		for(CoupleEntiers c :header.getCouplesEntier())
 		{
-			if(c.getFreeSlots() > 0)//vÃ©rifier qu'il reste des pages libres
+			if(c.getFreeSlots() > 0)//vérifier qu'il reste des pages libres
 			{
 				oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
-				this.bm.free(oPageId, false); //LibÃ©ration sans modification
+				this.bm.free(oPageId, false); //Libération sans modification
 				libre = true;
 				break;
 				
@@ -47,28 +49,30 @@ public class HeapFile {
 		if(!libre)
 		{
 			this.dm.addPage(oPageId.getFileIdx(), oPageId);
-			this.bm.flushAll();//Actualisation complÃ¨te ?
+			this.bm.flushAll();//Actualisation complète ?
 			header.writeToBuffer(buffer);
 			this.bm.free(oPageId, true);
 			
-			//byte bufferNouvellePage[] = this.bm.get(oPageId);
-			//Utilisation du bytemap... comment faire ?
+			byte bufferNouvellePage[] = this.bm.get(oPageId);
+			for(int i = 0; i<this.listeChainee.getSlotCount(); i++)
+			{
+				bufferNouvellePage[i] = 0;
+			}
+			this.bm.free(oPageId, true);
 		}
 	}
 	
-	public void updateHeaderWithTakenSlot(PageId iPageId)
+	public void updateHeaderWithTakenSlot(PageId iPageId) throws IOException
 	{
 		byte buffer[] = this.bm.get(iPageId);
 		HeaderPageInfo header = new HeaderPageInfo();
 		header.writeToBuffer(buffer);
-		
-		/*
-		 * Impossible de changer le nombre de slots disponibles (changer CoupleEntiers correspondant Ã  iPageId dans HeaderPageInfo)
-		 * --> setter pour le couple de HeaderPageInfo afin de changer le nombre de slots dispos ?
-		 * 
-		 * this.bm.flushAll(); //Actualisation
-		 * this.bm.free
-		 */
+		int freeSlots = header.getCoupleEntier(iPageId.getPageIdx()).getFreeSlots();
+		header.getCoupleEntier(iPageId.getPageIdx()).setFreeSlots(freeSlots --); //décrémenter cases dispo
+		header.writeToBuffer(buffer);
+		this.bm.flushAll(); //Actualisation
+		this.bm.free(iPageId,true);
+		 
 	}
 	
 	public RelDef getListe() {
