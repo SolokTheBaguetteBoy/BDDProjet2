@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import fileManager.FileManager;
 import util.Constantes;
 
 public class DBManager {
@@ -25,6 +26,7 @@ public class DBManager {
 
 	public void init() {
 		DBDef.getInstance().init();
+		FileManager.getInstance().init();
 	}
 
 	public void finish() {
@@ -74,6 +76,7 @@ public class DBManager {
 		
 		
 		DBDef.getInstance().addRelation(def);
+		FileManager.getInstance().createNewHeapFile(def);
 	}
 
 }

@@ -5,6 +5,10 @@ import java.util.ArrayList;
 public class Record {
 	
 	private ArrayList<String> values;
+	
+	public Record() {
+		this.values = new ArrayList<String>();
+	}
 
 	public ArrayList<String> getValues() {
 		return values;

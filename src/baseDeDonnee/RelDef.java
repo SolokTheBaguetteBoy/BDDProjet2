@@ -79,6 +79,8 @@ public class RelDef implements Serializable{
 		this.fileIdx = fileIdx;
 	}
 	
-	
+	public String getNom() {
+		return nomRelation;
+	}
 
 }

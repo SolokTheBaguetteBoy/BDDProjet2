@@ -82,4 +82,8 @@ public class HeapFile {
 	public void setListe(RelDef liste) {
 		this.listeChainee = liste;
 	}
+	
+	public RelDef getRelDef() {
+		return listeChainee;
+	}
 }
