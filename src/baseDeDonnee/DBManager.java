@@ -76,17 +76,11 @@ public class DBManager {
 	
 	public void insertRelation(String nomRelation, ArrayList<String> valeurs) {
 		
-		for (RelDef rd : DBDef.getInstance().getListeRelations()) 
-		{
-			if (rd.getNomRelation().equals(nomRelation))
-			{
-				for (String string : valeurs) 
-				{
-					rd.getTypesColonne().add(string);
-				}
-			}
-		}
+		Record rec = new Record();
+		rec.setValues(valeurs);
+		FileManager.getInstance().insertRecordInRelation(nomRelation, rec);
 	}
+	
 	public void createRelation(String nomRelation, int nombreColonne, ArrayList<String> typesColonne) throws FileNotFoundException, IOException {
 		
 		RelDef def = new RelDef(nomRelation, nombreColonne, typesColonne);
