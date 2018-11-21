@@ -65,21 +65,22 @@ public class DBDef {
 				
 				while (!finished)
 				{
+					try {
 						Object obj = ois.readObject();
-					
-					if (obj != null)
-					{
-						this.listeRelations.add((RelDef) obj);
-					}
-					else {
-						finished = true;
+						
+						if (obj != null)
+						{
+							this.listeRelations.add((RelDef) obj);
+						}
+						else {
+							finished = true;
+						}
+					} catch (EOFException msg) {
+						ois.close();
+						System.out.println("Initialisation du systeme finie");
 					}
 				}
-				
-				ois.close();
-				
-			} catch (EOFException msg) {
-				System.out.println("Fin de lecture");
+			
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			} 
@@ -87,6 +88,8 @@ public class DBDef {
 			/*for (RelDef relDef : listeRelations) {
 				System.out.println(relDef.getFileIdx() + " " + relDef.getNomRelation());
 			}*/
+		} else {
+			return;
 		}
 	}
 
