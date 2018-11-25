@@ -45,10 +45,18 @@ public class FileManager {
 	
 	public Rid insertRecordInRelation(String RelationName, Record Record) {
 		for(HeapFile hp : heapFileList) {
-			if(hp.getRelDef().getNomRelation().equals(RelationName)) {
+			if(hp.getListe().getNomRelation().equals(RelationName)) {
 				//return hp.insertRecord();
 			}
 		}
 		return new Rid(new PageId(), 0);
+	}
+	
+	
+	/**
+	 * Remet le File Manager à 0
+	 */
+	public void reset() {
+		this.heapFileList = new ArrayList<HeapFile>();
 	}
 }

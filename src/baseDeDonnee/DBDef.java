@@ -114,4 +114,12 @@ public class DBDef {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Remet DBDef à 0
+	 */
+	public void reset() {
+		this.compteurRelations = 0;
+		this.listeRelations = new ArrayList<RelDef>();
+	}
 }

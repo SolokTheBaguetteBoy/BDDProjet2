@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import bufferManager.BufferManager;
 import fileManager.FileManager;
 import util.Constantes;
 
@@ -14,6 +15,7 @@ public class DBManager {
 
 	}
 
+	// Singleton
 	private static DBManager INSTANCE = null;
 	
 	public static DBManager getInstance() {
@@ -25,15 +27,31 @@ public class DBManager {
 		
 	}
 
+	
+	/**
+	 * Initialise le système
+	 */
 	public void init() {
 		DBDef.getInstance().init();
 		FileManager.getInstance().init();
 	}
 
+	
+	/**
+	 * Termine le système et sauvegarde les données persistantes
+	 */
 	public void finish() {
 		DBDef.getInstance().finish();
 	}
 
+	
+	/**
+	 * Appelle l'action correspondant à la commande
+	 * @param command la commande à effectuer avec les paramètres
+	 * @throws NumberFormatException
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	public void processCommand(String command) throws NumberFormatException, FileNotFoundException, IOException {
 		
 		/*
@@ -69,7 +87,13 @@ public class DBManager {
 		}
 	}
 	
+	
+	/**
+	 * Vide le dossier DB et remet le buffer manager, DBDef et file manager à 0
+	 */
 	public void clean() {
+		
+		// On supprime le contenu du sous-répertoire DB
 		File f = new File("DB");
 		for (File c : f.listFiles()) 
 		{
@@ -77,9 +101,20 @@ public class DBManager {
 			c.delete();
 		}
 		
-		DBDef.getInstance().setCompteurRelations(0);
+		// On vide DBDef, Buffer Manager et File Manager
+		
+		DBDef.getInstance().reset();
+		BufferManager.getInstance().reset();
+		FileManager.getInstance().reset();
+		
 	}
 	
+	
+	/**
+	 * Insert une relation
+	 * @param nomRelation le nom de la relation
+	 * @param valeurs les valeurs du record
+	 */
 	public void insertRelation(String nomRelation, ArrayList<String> valeurs) {
 		
 		Record rec = new Record();
@@ -87,6 +122,15 @@ public class DBManager {
 		FileManager.getInstance().insertRecordInRelation(nomRelation, rec);
 	}
 	
+	
+	/**
+	 * Crée une relation dans DBDef
+	 * @param nomRelation le nom de la relation à créer
+	 * @param nombreColonne le nombre de colonne de la table
+	 * @param typesColonne les types des colonnes
+	 * @throws FileNotFoundException si le fichier n'est pas trouvé
+	 * @throws IOException
+	 */
 	public void createRelation(String nomRelation, int nombreColonne, ArrayList<String> typesColonne) throws FileNotFoundException, IOException {
 		
 		RelDef def = new RelDef(nomRelation, nombreColonne, typesColonne);

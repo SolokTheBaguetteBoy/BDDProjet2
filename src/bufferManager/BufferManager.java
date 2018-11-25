@@ -101,4 +101,13 @@ public class BufferManager {
 			}
 		}
 	}
+	
+	
+	/**
+	 * Remet le Buffer Manager à 0
+	 */
+	public void reset() {
+		this.currentLoadedFrame = 0;
+		this.bufferPool = new ArrayList<Frame>();
+	}
 }
