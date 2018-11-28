@@ -57,6 +57,6 @@ public class FileManager {
 	 * Remet le File Manager à 0
 	 */
 	public void reset() {
-		this.heapFileList = new ArrayList<HeapFile>();
+		this.heapFileList.clear();
 	}
 }

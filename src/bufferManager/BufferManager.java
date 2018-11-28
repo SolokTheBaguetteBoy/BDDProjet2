@@ -108,6 +108,6 @@ public class BufferManager {
 	 */
 	public void reset() {
 		this.currentLoadedFrame = 0;
-		this.bufferPool = new ArrayList<Frame>();
+		this.bufferPool.clear();
 	}
 }
