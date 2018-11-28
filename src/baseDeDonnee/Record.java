@@ -18,5 +18,7 @@ public class Record {
 		this.values = values;
 	}
 	
-
+	public String getValueForCol(int idxCol) {
+		return values.get(idxCol);
+	}
 }

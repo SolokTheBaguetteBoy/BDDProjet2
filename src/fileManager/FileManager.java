@@ -59,4 +59,34 @@ public class FileManager {
 	public void reset() {
 		this.heapFileList.clear();
 	}
+	
+	public ArrayList<Record> getAllRecords(String RelationName){
+		HeapFile hf = getGivenHeapFile(RelationName);
+		ArrayList<PageId> listPids = hf.getDataPagesId();
+		ArrayList<Record> listRecordToReturn = new ArrayList<Record>();
+		for(PageId pid : listPids) {
+			listRecordToReturn.addAll(hf.getRecordsOnPage(pid));
+		}
+		return listRecordToReturn;
+	}
+	
+	private HeapFile getGivenHeapFile(String RelationName) {
+		for(HeapFile hf : heapFileList) {
+			if(hf.getRelDef().getNom().equals(RelationName)){
+				return hf;
+			}
+		}
+		return new HeapFile(new RelDef());
+	}
+	
+	public ArrayList<Record> getAllRecordsWithFilter(String RelationName, int idxCol, String valeur){
+		ArrayList<Record> OGlist = getAllRecords(RelationName);
+		ArrayList<Record> filteredList = new ArrayList<Record>();
+		for(Record r : OGlist) {
+			if(r.getValueForCol(idxCol).equals(valeur)) {
+				filteredList.add(r);
+			}
+		}
+		return fitleredList;
+	}
 }
