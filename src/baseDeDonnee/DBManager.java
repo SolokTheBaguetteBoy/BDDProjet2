@@ -1,9 +1,13 @@
 package baseDeDonnee;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import bufferManager.BufferManager;
 import fileManager.FileManager;
@@ -70,6 +74,7 @@ public class DBManager {
 			}
 			createRelation(splitCommand[1], Integer.parseInt(splitCommand[2]), types);
 			break;
+			
 		case "insert":
 			ArrayList<String> valeurs = new ArrayList<String>();
 			for (int i = 2; i < splitCommand.length; i++) {
@@ -82,9 +87,57 @@ public class DBManager {
 			clean();
 			break;
 			
+		case "fill":
+			ArrayList<String> lignes = new ArrayList<String>();
+			lignes = getLinesFromCSV(splitCommand[2]);
+			
+			for (String string : lignes) 
+			{
+				ArrayList<String> values = new ArrayList<String>();
+				
+				String[] valeursFile = string.split(",");
+				
+				for (String string2 : valeursFile) 
+				{
+					values.add(string2);
+				}
+				
+				insertRelation(splitCommand[1], values);
+				
+			}
+			break;
+			
 		default:
 			System.out.println("Commande non reconnue");
 		}
+	}
+	
+	
+	public ArrayList<String> getLinesFromCSV(String fileName){
+		File file = new File(fileName);
+		
+		ArrayList<String> values = new ArrayList<String>();
+		
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+			
+			char[] res = new char[(int) file.length()];
+			
+			br.read(res);
+			br.close();
+			
+			String str = new String(res);
+			String[] ligne = str.split("\\r?\\n");
+			
+			for (int i = 0; i < ligne.length; i++) 
+			{
+				values.add(ligne[i]);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return values;
 	}
 	
 	
@@ -97,12 +150,11 @@ public class DBManager {
 		File f = new File("DB");
 		for (File c : f.listFiles()) 
 		{
-			System.out.println("deleting file " + c.getName());
+			System.out.println("Deleting file " + c.getName());
 			c.delete();
 		}
 		
 		// On vide DBDef, Buffer Manager et File Manager
-		
 		DBDef.getInstance().reset();
 		BufferManager.getInstance().reset();
 		FileManager.getInstance().reset();
@@ -124,7 +176,7 @@ public class DBManager {
 	
 	
 	/**
-	 * Crée une relation dans DBDef
+	 * Crée une relation dans DBDef et le Heap File correspondant
 	 * @param nomRelation le nom de la relation à créer
 	 * @param nombreColonne le nombre de colonne de la table
 	 * @param typesColonne les types des colonnes

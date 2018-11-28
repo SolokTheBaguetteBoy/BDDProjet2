@@ -49,6 +49,7 @@ public class DBDef {
 		this.compteurRelations = compteurRelations;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void init() {
 		
 		File f = new File("DB/Catalog.def");
@@ -61,35 +62,29 @@ public class DBDef {
 				
 				this.compteurRelations = ois.readInt();
 				
-				boolean finished = false;
-				
-				while (!finished)
-				{
-					try {
-						Object obj = ois.readObject();
-						
-						if (obj != null)
-						{
-							this.listeRelations.add((RelDef) obj);
-						}
-						else {
-							finished = true;
-						}
-					} catch (EOFException msg) {
-						ois.close();
-						System.out.println("Initialisation du systeme finie");
+				try {
+					Object obj = ois.readObject();
+					
+					if (obj != null)
+					{							
+						this.listeRelations = (ArrayList<RelDef>) obj;
 					}
+				} catch (EOFException msg) {
+					msg.printStackTrace();
+				} finally {
+					ois.close();
+					System.out.println("Initialisation du systeme finie");
 				}
 			
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			} 
-			
-			/*for (RelDef relDef : listeRelations) {
+			/*System.out.println(compteurRelations);
+			for (RelDef relDef : listeRelations) {
 				System.out.println(relDef.getFileIdx() + " " + relDef.getNomRelation());
 			}*/
 		} else {
-			return;
+		return;
 		}
 	}
 
@@ -98,23 +93,20 @@ public class DBDef {
 		File f = new File("DB/Catalog.def");
 
 		try {
-			
+
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
-			
+
 			oos.writeInt(compteurRelations);
 
-			for (RelDef relDef : listeRelations) {
+			oos.writeObject(listeRelations);
 
-				oos.writeObject(relDef);
-			}
-			
 			oos.close();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Remet DBDef à 0
 	 */
