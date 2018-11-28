@@ -103,10 +103,8 @@ public class HeapFile {
 		
 		int position  = this.listeChainee.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
 		ByteBuffer tempBuffer = ByteBuffer.wrap(ioBuffer);
-		int allocationMemoire = 0;
-		ArrayList<Object> elements = new ArrayList<>();
 		ArrayList<String> TypeColonnes = this.listeChainee.getTypesColonne();
-		//Étape 1 : somme de la mémoire totale à allouer
+		//Étape 1 : récupération des données et écriture en byte depuis ByteBuffer
 		for(int i = 0; i < TypeColonnes.size(); i++)
 		{
 			
@@ -114,12 +112,10 @@ public class HeapFile {
 				switch(TypeColonnes.get(i))
 				{
 					case "int":
-						allocationMemoire+=4;
-						elements.add(Integer.valueOf(iRecord.getValues().get(i)));
+						tempBuffer.putInt(Integer.valueOf(iRecord.getValues().get(i)));
 						break;
 					case "float":
-						allocationMemoire+=4;
-						elements.add(Float.valueOf(iRecord.getValues().get(i)));
+						tempBuffer.putFloat(Float.valueOf(iRecord.getValues().get(i)));
 						break;
 				}
 
@@ -127,36 +123,14 @@ public class HeapFile {
 			else //stringx => x = longueur string, la récupérer
 			{
 				int longueurString= Integer.parseInt(TypeColonnes.get(i).replaceAll("\\D+", ""));
-				for(int j = 0; j<longueurString; j++)
-					allocationMemoire+=2;//un char vaut 2 bytes
-				
-				elements.add(iRecord.getValues().get(i));
+				for(int j = 0; j<longueurString; j++) {
+					tempBuffer.putChar(iRecord.getValues().get(i).charAt(j));
+				}
 			}
 
 		}
-		//Étape 2 Allocation de la mémoire
-		tempBuffer = ByteBuffer.allocate(allocationMemoire);
-		//Étape 3 Positionnement
+		//Écriture dans le buffer
 		tempBuffer.position(position);
-		//Étape 4 écriture dans le ByteBuffer (cast car appel à ArrayList<Object>)
-		for(Object o : elements)
-		{
-			switch(o.getClass().getSimpleName())
-			{
-				case "Integer":
-					tempBuffer.putInt((int)o);
-					break;
-				case "Float":
-					tempBuffer.putFloat((float)o);
-					break;
-				case "String":
-					String temp = (String)o;
-					CharBuffer cbuf = tempBuffer.asCharBuffer();
-					cbuf.put(temp);
-					
-			}
-		}
-		//Étape 5 rendu du tableau par ByteBuffer
 		ioBuffer = tempBuffer.array(); 
 	
 
@@ -186,15 +160,17 @@ public class HeapFile {
 		return (new Rid(iPageId,index));
 	}
 	
-	public Record readRecordFromBuffer(byte[] buffer, int sltIdx) {
+	public RelDef getRelDef()
+	{
+		return this.listeChainee;
+	}
+	
+	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
 		
-		//ByteBuffer b = ByteBuffer.wrap(buffer);
-		String v = new String(buffer[sltIndx], Charset.forName("UTF-8") );
-		ArrayList<String> forRecord = new ArrayList<String>();
-		forRecord.add(v);
-		Record r = new Record();
-		r.setValues(forRecord);
-		return r;
+		ByteBuffer b = ByteBuffer.wrap(buffer);
+		Record result = new Record();
+		
+		return result;
 		
 	}
 }
