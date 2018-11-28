@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 import bufferManager.BufferManager;
 import fileManager.FileManager;
@@ -33,7 +35,7 @@ public class DBManager {
 
 	
 	/**
-	 * Initialise le système
+	 * Initialise le systï¿½me
 	 */
 	public void init() {
 		DBDef.getInstance().init();
@@ -42,7 +44,7 @@ public class DBManager {
 
 	
 	/**
-	 * Termine le système et sauvegarde les données persistantes
+	 * Termine le systï¿½me et sauvegarde les donnï¿½es persistantes
 	 */
 	public void finish() {
 		DBDef.getInstance().finish();
@@ -50,8 +52,8 @@ public class DBManager {
 
 	
 	/**
-	 * Appelle l'action correspondant à la commande
-	 * @param command la commande à effectuer avec les paramètres
+	 * Appelle l'action correspondant ï¿½ la commande
+	 * @param command la commande ï¿½ effectuer avec les paramï¿½tres
 	 * @throws NumberFormatException
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -106,6 +108,20 @@ public class DBManager {
 				
 			}
 			break;
+		case "selectall":
+			List<Record> records = FileManager.getInstance().getAllRecords(splitCommand[1]);
+			for (Record record : records) {
+				System.out.println(record);
+			}
+			System.out.println("Total records : "+records.size());
+			break;
+		
+		case "select":
+			List<Record> records2 = FileManager.getInstance().getAllRecordsWithFilter(splitCommand[1], Integer.parseInt(splitCommand[2]), splitCommand[2]);
+			for (Record record : records2) {
+				System.out.println(record);
+			}
+			System.out.println("Total records : "+records2.size());
 			
 		default:
 			System.out.println("Commande non reconnue");
@@ -142,11 +158,11 @@ public class DBManager {
 	
 	
 	/**
-	 * Vide le dossier DB et remet le buffer manager, DBDef et file manager à 0
+	 * Vide le dossier DB et remet le buffer manager, DBDef et file manager ï¿½ 0
 	 */
 	public void clean() {
 		
-		// On supprime le contenu du sous-répertoire DB
+		// On supprime le contenu du sous-rï¿½pertoire DB
 		File f = new File("DB");
 		for (File c : f.listFiles()) 
 		{
@@ -176,11 +192,11 @@ public class DBManager {
 	
 	
 	/**
-	 * Crée une relation dans DBDef et le Heap File correspondant
-	 * @param nomRelation le nom de la relation à créer
+	 * Crï¿½e une relation dans DBDef et le Heap File correspondant
+	 * @param nomRelation le nom de la relation ï¿½ crï¿½er
 	 * @param nombreColonne le nombre de colonne de la table
 	 * @param typesColonne les types des colonnes
-	 * @throws FileNotFoundException si le fichier n'est pas trouvé
+	 * @throws FileNotFoundException si le fichier n'est pas trouvï¿½
 	 * @throws IOException
 	 */
 	public void createRelation(String nomRelation, int nombreColonne, ArrayList<String> typesColonne) throws FileNotFoundException, IOException {
@@ -205,5 +221,5 @@ public class DBManager {
 		DBDef.getInstance().addRelation(def);
 		FileManager.getInstance().createNewHeapFile(def);
 	}
-
+	
 }
