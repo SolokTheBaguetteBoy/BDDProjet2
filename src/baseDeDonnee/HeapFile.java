@@ -104,17 +104,6 @@ public class HeapFile {
 		ByteBuffer tempBuffer;
 		int allocationMemoire = 0;
 		ArrayList<Object> elements = new ArrayList<>();
-		/****************************À METTRE AU REBUS APRÈS CONFIRMATION*****************************************************/
-		/*
-		 * On utilise ici un double tableau afin de bien séparer les types primitifs aux chaînes de caractères :
-		 * Exemple : soit int 1 int 2 string5 hello
-		 * On les stocke pour ensuite les envoyer au buffer :
-		 * Avec un tableau simple : [1,2,"h","e","l","l","o"]
-		 * --> problème : la chaîne est découpée, et par traduction la requête donnerait int 1 int 2 string1 h string2 e etc.
-		 * Avec un double tableau :
-		 * [[1],[2],["hello"]] -> ok
-		 */
-		/********************************************************************************************************************/
 		ArrayList<String> TypeColonnes = this.listeChainee.getTypesColonne();
 		//Étape 1 : somme de la mémoire totale à allouer
 		for(int i = 0; i < TypeColonnes.size(); i++)
@@ -196,5 +185,8 @@ public class HeapFile {
 		return (new Rid(iPageId,index));
 	}
 	
-	
+	public Record readRecordFromBuffer(byte[] buffer, int sltIdx) {
+		
+		
+	}
 }
