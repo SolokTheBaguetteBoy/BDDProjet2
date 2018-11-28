@@ -3,6 +3,7 @@ package baseDeDonnee;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.util.ArrayList;
 
 import bufferManager.BufferManager;
@@ -160,10 +161,9 @@ public class HeapFile {
 					break;
 				case "String":
 					String temp = (String)o;
-					for(char c : temp.toCharArray())
-					{
-						tempBuffer.putChar(c);
-					}
+					CharBuffer cbuf = tempBuffer.asCharBuffer();
+					cbuf.put(temp);
+					
 			}
 		}
 		//Étape 5 rendu du tableau par ByteBuffer
