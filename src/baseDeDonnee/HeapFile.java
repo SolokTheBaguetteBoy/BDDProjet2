@@ -1,5 +1,6 @@
 package baseDeDonnee;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -91,40 +92,84 @@ public class HeapFile {
 	 * @param iRecord L'enregistrement
 	 * @param ioBuffer La page en forme buffer (récupérer la page à partir du BufferManager ?)
 	 * @param iSlotIdx Indice de la case de la page
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public void writeRecordInBuffer(Record iRecord, byte[] ioBuffer, int iSlotIdx)
+	public void writeRecordInBuffer(Record iRecord, byte[] ioBuffer, int iSlotIdx) throws FileNotFoundException, IOException
 	{
 		//Retrouver les types de champs du Record
-		byte valeursEnregistrements = 0;
-		ByteBuffer allocationType = null;
+		
+		int position  = this.listeChainee.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
+		ByteBuffer tempBuffer;
+		int allocationMemoire = 0;
+		ArrayList<Object> elements = new ArrayList<>();
+		/****************************À METTRE AU REBUS APRÈS CONFIRMATION*****************************************************/
+		/*
+		 * On utilise ici un double tableau afin de bien séparer les types primitifs aux chaînes de caractères :
+		 * Exemple : soit int 1 int 2 string5 hello
+		 * On les stocke pour ensuite les envoyer au buffer :
+		 * Avec un tableau simple : [1,2,"h","e","l","l","o"]
+		 * --> problème : la chaîne est découpée, et par traduction la requête donnerait int 1 int 2 string1 h string2 e etc.
+		 * Avec un double tableau :
+		 * [[1],[2],["hello"]] -> ok
+		 */
+		/********************************************************************************************************************/
 		ArrayList<String> TypeColonnes = this.listeChainee.getTypesColonne();
+		//Étape 1 : somme de la mémoire totale à allouer
 		for(int i = 0; i < TypeColonnes.size(); i++)
 		{
+			
 			if(!TypeColonnes.get(i).contains("string")) {
 				switch(TypeColonnes.get(i))
 				{
 					case "int":
-						allocationType = ByteBuffer.allocate(4);
+						allocationMemoire+=4;
+						elements.add(Integer.valueOf(iRecord.getValues().get(i)));
 						break;
 					case "float":
-						allocationType = ByteBuffer.allocate(4);
+						allocationMemoire+=4;
+						elements.add(Float.valueOf(iRecord.getValues().get(i)));
 						break;
 				}
-				for(byte b : allocationType.array())
-					valeursEnregistrements += b;
+
 			}
 			else //stringx => x = longueur string, la récupérer
 			{
 				int longueurString= Integer.parseInt(TypeColonnes.get(i).replaceAll("\\D+", ""));
 				for(int j = 0; j<longueurString; j++)
-				{
-					allocationType = ByteBuffer.allocate(iRecord.getValues().get(i).charAt(j)*2);//Récupérer le caractère de la valeur de type string
-					for(byte b: allocationType.array())
-						valeursEnregistrements += b;
-				}
+					allocationMemoire+=2;//un char vaut 2 bytes
+				
+				elements.add(iRecord.getValues().get(i));
 			}
 
 		}
+		//Étape 2 Allocation de la mémoire
+		tempBuffer = ByteBuffer.allocate(allocationMemoire);
+		//Étape 3 Positionnement
+		tempBuffer.position(position);
+		//Étape 4 écriture dans le ByteBuffer (cast car appel à ArrayList<Object>)
+		for(Object o : elements)
+		{
+			switch(o.getClass().getSimpleName())
+			{
+				case "Integer":
+					tempBuffer.putInt((int)o);
+					break;
+				case "Float":
+					tempBuffer.putFloat((float)o);
+					break;
+				case "String":
+					String temp = (String)o;
+					for(char c : temp.toCharArray())
+					{
+						tempBuffer.putChar(c);
+					}
+			}
+		}
+		//Étape 5 rendu du tableau par ByteBuffer
+		ioBuffer = tempBuffer.array(); 
+	
+
 	}
 	
 	/** NARESH
