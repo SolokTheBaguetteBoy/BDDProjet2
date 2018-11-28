@@ -87,6 +87,6 @@ public class FileManager {
 				filteredList.add(r);
 			}
 		}
-		return fitleredList;
+		return filteredList;
 	}
 }
