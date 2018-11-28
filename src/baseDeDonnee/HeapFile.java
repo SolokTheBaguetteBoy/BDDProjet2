@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import bufferManager.BufferManager;
 import headerPageInfo.CoupleEntiers;
@@ -153,7 +154,6 @@ public class HeapFile {
 				index = i;
 			i++;
 		}while(index==-1);
-		Record record = new Record();
 		//writeRecordInBuffer (iRecord, buffer, index)
 		buffer[index]=1;
 		bm.free(iPageId, true);
@@ -167,10 +167,54 @@ public class HeapFile {
 	
 	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
 		
-		ByteBuffer b = ByteBuffer.wrap(buffer);
-		Record result = new Record();
+		ByteBuffer b = ByteBuffer.wrap(buffer, slotIdx, buffer.length);
+		ArrayList<String> record = new ArrayList<>();
+		byte recordByte[] = new byte[b.remaining()];//Récupère la taille de l'ensemble de bytes depuis le ByteBuffer
+		StringBuffer tempString = new StringBuffer(); //String temporaire pour le for
 		
+		
+		for(int i = 0; i < recordByte.length; i++)
+		{	
+			Integer tempInt = Integer.valueOf(b.getInt(i)) ;//
+			Float tempFloat = Float.valueOf(b.getFloat(i)) ;
+			Character tempChar = Character.valueOf(b.getChar(i)) ;
+			if(tempInt != null)
+			{
+				record.add(Integer.toString(tempInt));
+				
+			}
+			else if(tempFloat != null)
+			{
+				record.add(Float.toString(tempFloat));
+			}
+			else if((tempChar != null))
+			{
+				
+				tempString.append(tempChar);
+				
+			}
+			
+			if(tempChar == null && tempString.length() != 0) {
+				record.add(tempString.toString());
+				tempString = new StringBuffer();
+			}
+			
+			
+		}
+		
+		Record result = new Record();
+		result.setValues(record);
 		return result;
 		
+	}
+
+	public ArrayList<PageId> getDataPagesId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Collection<? extends Record> getRecordsOnPage(PageId pid) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
