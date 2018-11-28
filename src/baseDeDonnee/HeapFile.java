@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 import bufferManager.BufferManager;
@@ -101,7 +102,7 @@ public class HeapFile {
 		//Retrouver les types de champs du Record
 		
 		int position  = this.listeChainee.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
-		ByteBuffer tempBuffer;
+		ByteBuffer tempBuffer = ByteBuffer.wrap(ioBuffer);
 		int allocationMemoire = 0;
 		ArrayList<Object> elements = new ArrayList<>();
 		ArrayList<String> TypeColonnes = this.listeChainee.getTypesColonne();
@@ -187,6 +188,13 @@ public class HeapFile {
 	
 	public Record readRecordFromBuffer(byte[] buffer, int sltIdx) {
 		
+		//ByteBuffer b = ByteBuffer.wrap(buffer);
+		String v = new String(buffer[sltIndx], Charset.forName("UTF-8") );
+		ArrayList<String> forRecord = new ArrayList<String>();
+		forRecord.add(v);
+		Record r = new Record();
+		r.setValues(forRecord);
+		return r;
 		
 	}
 }
