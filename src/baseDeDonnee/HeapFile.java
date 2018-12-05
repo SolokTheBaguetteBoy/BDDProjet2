@@ -215,6 +215,7 @@ public class HeapFile {
 				listeRecords.add(this.readRecordFromBuffer(buffer, i));
 			}
 		}
+		this.bm.free(pid, false);
 		return listeRecords;
 	}
 	
@@ -229,7 +230,7 @@ public class HeapFile {
 		
 		for(CoupleEntiers c : hp.getCouplesEntier())
 			pages.add(new PageId(c.getPageIdx(),c.getFreeSlots()));
-		
+		this.bm.free(headerPage, false);
 		return pages;
 	}
 
