@@ -3,19 +3,17 @@ package baseDeDonnee;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import bufferManager.BufferManager;
 import headerPageInfo.CoupleEntiers;
 import headerPageInfo.HeaderPageInfo;
 
 public class HeapFile {
-	
+
 	private RelDef listeChainee;
-	
+
 	private DiskManager dm;
 	private BufferManager bm;
 	public HeapFile(RelDef listeChainee) {
@@ -24,7 +22,7 @@ public class HeapFile {
 		this.dm = DiskManager.getInstance();
 		this.bm = BufferManager.getInstance();
 	}
-	
+
 	public void createNewOnDisk(int iFileIdx) throws IOException
 	{
 		HeaderPageInfo header = new HeaderPageInfo();
@@ -34,10 +32,9 @@ public class HeapFile {
 		header.writeToBuffer(bm.get(pid));
 		this.bm.free(pid, true);	
 	}
-	
+
 	public void getFreePageId(PageId oPageId) throws IOException
 	{
-		boolean libre = false;
 		byte buffer[] = this.bm.get(oPageId);
 		HeaderPageInfo header = new HeaderPageInfo();
 		header.readFromBuffer(buffer);
@@ -47,27 +44,26 @@ public class HeapFile {
 			{
 				oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
 				this.bm.free(oPageId, false); //Libération sans modification
-				libre = true;
-				break;
-				
+
+				return; //arrêt complet de la méthode
+
 			}
 		}
-		if(!libre)
-		{
 			this.dm.addPage(oPageId.getFileIdx(), oPageId);
 			this.bm.flushAll();//Actualisation complète ?
 			header.writeToBuffer(buffer);
 			this.bm.free(oPageId, true);
-			
+
 			byte bufferNouvellePage[] = this.bm.get(oPageId);
 			for(int i = 0; i<this.listeChainee.getSlotCount(); i++)
 			{
 				bufferNouvellePage[i] = 0;
 			}
+			header.writeToBuffer(bufferNouvellePage);
 			this.bm.free(oPageId, true);
-		}
+		
 	}
-	
+
 	public void updateHeaderWithTakenSlot(PageId iPageId) throws IOException
 	{
 		byte buffer[] = this.bm.get(iPageId);
@@ -78,9 +74,9 @@ public class HeapFile {
 		header.writeToBuffer(buffer);
 		this.bm.flushAll(); //Actualisation
 		this.bm.free(iPageId,true);
-		 
+
 	}
-	
+
 	public RelDef getListe() {
 		return listeChainee;
 	}
@@ -88,7 +84,7 @@ public class HeapFile {
 	public void setListe(RelDef liste) {
 		this.listeChainee = liste;
 	}
-	
+
 	/** 
 	 * Écriture du Record / Enregistrement dans le buffer
 	 * On convertit chaque valeur en octets sans oublier leur type (int = 4 octets, float = 4 octets, char = 2 octets, etc.)
@@ -101,23 +97,23 @@ public class HeapFile {
 	public void writeRecordInBuffer(Record iRecord, byte[] ioBuffer, int iSlotIdx) throws FileNotFoundException, IOException
 	{
 		//Retrouver les types de champs du Record
-		
+
 		int position  = this.listeChainee.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
 		ByteBuffer tempBuffer = ByteBuffer.wrap(ioBuffer);
 		ArrayList<String> TypeColonnes = this.listeChainee.getTypesColonne();
 		//Étape 1 : récupération des données et écriture en byte depuis ByteBuffer
 		for(int i = 0; i < TypeColonnes.size(); i++)
 		{
-			
+
 			if(!TypeColonnes.get(i).contains("string")) {
 				switch(TypeColonnes.get(i))
 				{
-					case "int":
-						tempBuffer.putInt(Integer.valueOf(iRecord.getValues().get(i)));
-						break;
-					case "float":
-						tempBuffer.putFloat(Float.valueOf(iRecord.getValues().get(i)));
-						break;
+				case "int":
+					tempBuffer.putInt(Integer.valueOf(iRecord.getValues().get(i)));
+					break;
+				case "float":
+					tempBuffer.putFloat(Float.valueOf(iRecord.getValues().get(i)));
+					break;
 				}
 
 			}
@@ -133,17 +129,17 @@ public class HeapFile {
 		//Écriture dans le buffer
 		tempBuffer.position(position);
 		ioBuffer = tempBuffer.array(); 
-	
+
 
 	}
-	
+
 	/** NARESH
 	 * 	Méthode qui prend en argument un Record IRecord et un PageId iPageId et qui retourne un Rid
 	 *  @param iRecord de type Record
 	 *  @param iPageId de type PageId
 	 *  @return un Rid
 	 */
-	
+
 	public Rid insertRecordInPage(Record iRecord, PageId iPageId)
 	{
 		byte[] buffer = this.bm.get(iPageId);
@@ -159,29 +155,29 @@ public class HeapFile {
 		bm.free(iPageId, true);
 		return (new Rid(iPageId,index));
 	}
-	
+
 	public RelDef getRelDef()
 	{
 		return this.listeChainee;
 	}
-	
+
 	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
-		
+
 		ByteBuffer b = ByteBuffer.wrap(buffer, slotIdx, buffer.length);
 		ArrayList<String> record = new ArrayList<>();
 		byte recordByte[] = new byte[b.remaining()];//Récupère la taille de l'ensemble de bytes depuis le ByteBuffer
 		StringBuffer tempString = new StringBuffer(); //String temporaire pour le for
-		
-		
+
+
 		for(int i = 0; i < recordByte.length; i++)
 		{	
-			Integer tempInt = Integer.valueOf(b.getInt(i)) ;//
+			Integer tempInt = Integer.valueOf(b.getInt(i)) ;
 			Float tempFloat = Float.valueOf(b.getFloat(i)) ;
 			Character tempChar = Character.valueOf(b.getChar(i)) ;
 			if(tempInt != null)
 			{
 				record.add(Integer.toString(tempInt));
-				
+
 			}
 			else if(tempFloat != null)
 			{
@@ -189,32 +185,52 @@ public class HeapFile {
 			}
 			else if((tempChar != null))
 			{
-				
+
 				tempString.append(tempChar);
-				
+
 			}
-			
+
 			if(tempChar == null && tempString.length() != 0) {
 				record.add(tempString.toString());
 				tempString = new StringBuffer();
 			}
-			
-			
+
+
 		}
-		
+
 		Record result = new Record();
 		result.setValues(record);
 		return result;
-		
+
 	}
 
+
+	public List<Record> getRecordsOnPage(PageId pid) {
+		// TODO Auto-generated method stub
+		List<Record> listeRecords = new ArrayList<>();
+		byte buffer[] = this.bm.get(pid);
+		for (int i = 0; i < this.listeChainee.getSlotCount(); i++) {
+			if(buffer[i] != 0)//on vérifie si le slot n'est pas 0 (si le slot n'est pas vide)
+			{
+				listeRecords.add(this.readRecordFromBuffer(buffer, i));
+			}
+		}
+		return listeRecords;
+	}
+	
 	public ArrayList<PageId> getDataPagesId() {
 		// TODO Auto-generated method stub
-		return null;
+		ArrayList<PageId> pages = new ArrayList<>();
+		PageId headerPage = new PageId(this.listeChainee.getFileIdx(), 0);
+		byte buffer[] = this.bm.get(headerPage);
+		
+		HeaderPageInfo hp = new HeaderPageInfo();
+		hp.readFromBuffer(buffer);
+		
+		for(CoupleEntiers c : hp.getCouplesEntier())
+			pages.add(new PageId(c.getPageIdx(),c.getFreeSlots()));
+		
+		return pages;
 	}
 
-	public Collection<? extends Record> getRecordsOnPage(PageId pid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
