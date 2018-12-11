@@ -61,6 +61,7 @@ public class HeapFile {
 			}
 			header.writeToBuffer(bufferNouvellePage);
 			this.bm.free(oPageId, true);
+			
 		
 	}
 
@@ -138,22 +139,44 @@ public class HeapFile {
 	 *  @param iRecord de type Record
 	 *  @param iPageId de type PageId
 	 *  @return un Rid
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
 
-	public Rid insertRecordInPage(Record iRecord, PageId iPageId)
+	public Rid insertRecordInPage(Record iRecord, PageId iPageId) throws FileNotFoundException, IOException
 	{
 		byte[] buffer = this.bm.get(iPageId);
+		//System.out.println(buffer.length);
 		int index = -1;
-		int i=0;
-		do {
-			if(buffer[i]>0)
-				index = i;
-			i++;
-		}while(index==-1);
-		//writeRecordInBuffer (iRecord, buffer, index)
+		//int i=0;
+//		do {
+//			System.out.println("index : " + index);
+//			if(buffer[i]>0)
+//				index = i;
+//			i++;
+//		}while(index==-1);
+		for (int i = 0; i < buffer.length; i++) {
+			System.out.print(buffer[i]);
+		}
+		
+		for(int j = 0; (buffer.length > j && index == -1) ; j++) {
+			//System.out.println("Index : " + index);
+			if(buffer[j]>0) /** PROBLÈME À PARTIR D'ICI : TOUTES LES CASES DU TABLEAU QUE LE BUFFERMANAGER RETOURNE SONT À ZÉRO**/
+				index = j;
+		}
+		writeRecordInBuffer (iRecord, buffer, index);
 		buffer[index]=1;
 		bm.free(iPageId, true);
 		return (new Rid(iPageId,index));
+	}
+	
+	public Rid insertRecord(Record iRecord) throws IOException
+	{
+		PageId tempPage =  new PageId();
+		getFreePageId(tempPage);
+
+		return this.insertRecordInPage(iRecord,tempPage);
+		
 	}
 
 	public RelDef getRelDef()

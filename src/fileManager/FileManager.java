@@ -43,10 +43,10 @@ public class FileManager {
 		heapFileList.get(heapFileList.size() - 1).createNewOnDisk(rd.getFileIdx());
 	}
 	
-	public Rid insertRecordInRelation(String RelationName, Record Record) {
+	public Rid insertRecordInRelation(String RelationName, Record Record) throws IOException {
 		for(HeapFile hp : heapFileList) {
 			if(hp.getListe().getNomRelation().equals(RelationName)) {
-				//return hp.insertRecord();
+				return hp.insertRecord(Record);
 			}
 		}
 		return new Rid(new PageId(), 0);
@@ -54,7 +54,7 @@ public class FileManager {
 	
 	
 	/**
-	 * Remet le File Manager à 0
+	 * Remet le File Manager ï¿½ 0
 	 */
 	public void reset() {
 		this.heapFileList.clear();

@@ -117,11 +117,12 @@ public class DBManager {
 			break;
 		
 		case "select":
-			List<Record> records2 = FileManager.getInstance().getAllRecordsWithFilter(splitCommand[1], Integer.parseInt(splitCommand[2]), splitCommand[2]);
+			List<Record> records2 = FileManager.getInstance().getAllRecordsWithFilter(splitCommand[1], Integer.parseInt(splitCommand[2]), splitCommand[3]);
 			for (Record record : records2) {
 				System.out.println(record);
 			}
 			System.out.println("Total records : "+records2.size());
+			break;
 			
 		default:
 			System.out.println("Commande non reconnue");
@@ -187,7 +188,12 @@ public class DBManager {
 		
 		Record rec = new Record();
 		rec.setValues(valeurs);
-		FileManager.getInstance().insertRecordInRelation(nomRelation, rec);
+		try {
+			FileManager.getInstance().insertRecordInRelation(nomRelation, rec);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	
