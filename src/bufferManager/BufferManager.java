@@ -52,7 +52,7 @@ public class BufferManager {
 		if(pageFound == false) {
 			return load(pid);
 		}
-		return new byte[1]; //ne devrait jamais arrivé ici
+		return new byte[1]; //ne devrait jamais arrivï¿½ ici
 	}
 
 	private byte[] load(PageId pid) {
@@ -66,34 +66,50 @@ public class BufferManager {
 		else {
 			int frameToReplace = 0;
 			int minPinCount = 0;
-			for(int j = 0; j < frameCount; j++) {
-				if(minPinCount > bufferPool.get(j).getPinCount()) {
-					minPinCount = bufferPool.get(j).getPinCount();
-					frameToReplace = j;
+			if((bufferPool.get(0).getDirty() && bufferPool.get(1).getDirty())||(!bufferPool.get(0).getDirty() && !bufferPool.get(1).getDirty())) {
+				for(int j = 0; j < frameCount; j++) {
+					if(minPinCount > bufferPool.get(j).getPinCount() ) {
+						minPinCount = bufferPool.get(j).getPinCount();
+						frameToReplace = j;
+					}
+					else if(minPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(frameToReplace).getLastUnpin() > bufferPool.get(j).getLastUnpin()) {
+						frameToReplace = j;
+					}
 				}
-				else if(minPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(j).getDirty() == false) {
-					frameToReplace = j;
+				
+			}
+			else {
+				if(bufferPool.get(0).getDirty()) {
+					frameToReplace = 1;
 				}
-				else if(minPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(frameToReplace).getLastUnpin() > bufferPool.get(j).getLastUnpin()) {
-					frameToReplace = j;
+				if(bufferPool.get(1).getDirty()) {
+					frameToReplace = 0;
+				}
+			}
+			if(bufferPool.get(frameToReplace).getDirty()) {
+				try {
+					DiskManager.getInstance().writePage(bufferPool.get(frameToReplace).getPageId(), bufferPool.get(frameToReplace).getBuffer());
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			bufferPool.remove(frameToReplace);
-			bufferPool.add(toAdd);
+			bufferPool.add(frameToReplace,toAdd);
 			return toAdd.getBuffer();
 		}
-		
 	}
 	
 	public void free(PageId pid, boolean dirty) {
 		for(Frame f : bufferPool) {
-			if(f.getPageId() == pid) {
+			if(f.getPageId().equals(pid)) {
 				f.decrementPinCount();
 				if(dirty == true) {
 					f.frameContentModified();
 				}
 			}
 		}
+		
 	}
 	
 	public void flushAll() throws IOException {
@@ -103,10 +119,9 @@ public class BufferManager {
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * Remet le Buffer Manager à 0
+	 * Remet le Buffer Manager ï¿½ 0
 	 */
 	public void reset() {
 		this.currentLoadedFrame = 0;

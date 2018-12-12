@@ -40,7 +40,7 @@ public class HeapFile {
 		header.readFromBuffer(buffer);
 		for(CoupleEntiers c :header.getCouplesEntier())
 		{
-			if(c.getFreeSlots() > 0)//vérifier qu'il reste des pages libres
+			if(c.getFreeSlots() > 0)//vérifier qu'il reste des cases libres
 			{
 				oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
 				this.bm.free(oPageId, false); //Libération sans modification
@@ -50,6 +50,8 @@ public class HeapFile {
 			}
 		}
 			this.dm.addPage(oPageId.getFileIdx(), oPageId);
+			header.incrementer();
+			header.addToHeaderPageInfo(oPageId.getPageIdx(), this.listeChainee.getSlotCount());
 			this.bm.flushAll();//Actualisation complète ?
 			header.writeToBuffer(buffer);
 			this.bm.free(oPageId, true);

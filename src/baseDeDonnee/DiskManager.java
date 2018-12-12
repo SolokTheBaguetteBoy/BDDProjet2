@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import util.Constantes;
 
@@ -44,26 +45,34 @@ public class DiskManager {
 	}
 	
 	public void readPage(PageId iPageId, byte[] oBuffer) throws IOException {
-		
-		File f = new File("DB/Data_" + iPageId.getFileIdx() + ".rf");
-		
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
-		
-		bis.read(oBuffer, iPageId.getPageIdx() * Constantes.pageSize, Constantes.pageSize);
-		
-		bis.close();
+//		
+//		File f = new File("DB/Data_" + iPageId.getFileIdx() + ".rf");
+//		
+//		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(f));
+//		
+//		bis.read(oBuffer, iPageId.getPageIdx() * Constantes.pageSize, Constantes.pageSize);
+//		
+//		bis.close();
+		String name = "DB/Data_" + iPageId.getFileIdx() + ".rf";
+		RandomAccessFile rand = new RandomAccessFile(name, "r");
+		rand.seek(iPageId.getPageIdx()*Constantes.pageSize);
+		rand.readFully(oBuffer);
+		rand.close();
 		
 	}
 	
 	public void writePage(PageId iPageId, byte[] iBuffer) throws IOException {
 		
-		File f = new File("DB/Data_" + iPageId.getFileIdx() + ".rf");
-		
-		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(f));
-		
-		bos.write(iBuffer, iPageId.getPageIdx() * Constantes.pageSize, iBuffer.length);
-		
-		bos.close();
+		String name = "DB/Data_" + iPageId.getFileIdx() + ".rf";
+		RandomAccessFile rand = new RandomAccessFile(name, "rw");
+		rand.seek(iPageId.getPageIdx() * Constantes.pageSize);
+		rand.write(iBuffer);
+		rand.close();
+//		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(f));
+//		
+//		bos.write(iBuffer,, iBuffer.length);
+//		
+//		bos.close();
 		
 	}
 	

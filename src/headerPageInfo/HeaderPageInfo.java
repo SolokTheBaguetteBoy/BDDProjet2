@@ -13,6 +13,18 @@ public class HeaderPageInfo {
 		dataPageCount = 0;
 	}
 	
+	public int getPageCount()
+	{
+		return this.dataPageCount;
+	}
+	
+	public void incrementer()
+	{
+		this.dataPageCount++;
+	}
+	
+	
+	
 	public void addToHeaderPageInfo(int pageIdx, int freeSlots) {
 		couplesEntiers.add(new CoupleEntiers(pageIdx, freeSlots));
 	}

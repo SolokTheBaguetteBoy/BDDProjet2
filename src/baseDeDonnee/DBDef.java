@@ -9,6 +9,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import bufferManager.BufferManager;
+
 public class DBDef {
 
 	private ArrayList<RelDef> listeRelations;
@@ -101,14 +103,17 @@ public class DBDef {
 			oos.writeObject(listeRelations);
 
 			oos.close();
+			BufferManager.getInstance().flushAll();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		
 	}
 
 	/**
-	 * Remet DBDef à 0
+	 * Remet DBDef ï¿½ 0
 	 */
 	public void reset() {
 		this.compteurRelations = 0;
