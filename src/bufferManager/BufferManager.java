@@ -42,7 +42,7 @@ public class BufferManager {
 		boolean pageFound = false;
 		
 		for(Frame f : bufferPool) {
-			if(f.getPageId() == pid) {
+			if(f.getPageId().equals(pid)) {
 				pageFound = true;
 				f.incrementPinCount();
 				System.out.println(f);
