@@ -89,4 +89,31 @@ public class FileManager {
 		}
 		return filteredList;
 	}
+	
+	public ArrayList<Record> join(String nomRelation1, String nomRelation2, int indiceCol1, int indiceCol2) {
+		HeapFile hp1 = getGivenHeapFile(nomRelation1);
+		HeapFile hp2 = getGivenHeapFile(nomRelation2);
+		ArrayList<PageId> alpid1 = hp1.getDataPagesId();
+		ArrayList<PageId> alpid2 = hp2.getDataPagesId();
+		ArrayList<Record> alr1 = new ArrayList<Record>();
+		ArrayList<Record> alr2 = new ArrayList<Record>();
+		ArrayList<Record> toReturn = new ArrayList<Record>();
+		
+		for(PageId pid : alpid1) {
+			alr1.addAll(hp1.getRecordsOnPage(pid));
+		}
+		for(PageId pid : alpid2) {
+			alr2.addAll(hp2.getRecordsOnPage(pid));
+		}
+		
+		for(Record r1 : alr1) {
+			for(Record r2 : alr2) {
+				if(r1.getValueForCol(indiceCol1).equals(r2.getValueForCol(indiceCol2))) {
+					toReturn.add(r1);
+					toReturn.add(r2);
+				}
+			}
+		}
+		return toReturn;
+	}
 }
