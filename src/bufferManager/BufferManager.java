@@ -40,10 +40,12 @@ public class BufferManager {
 	
 	public byte[] get(PageId pid) {
 		boolean pageFound = false;
+		
 		for(Frame f : bufferPool) {
 			if(f.getPageId() == pid) {
 				pageFound = true;
 				f.incrementPinCount();
+				System.out.println(f);
 				return f.getBuffer();
 			}
 		}

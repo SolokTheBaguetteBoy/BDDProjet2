@@ -159,10 +159,12 @@ public class HeapFile {
 			System.out.print(buffer[i]);
 		}
 		
-		for(int j = 0; (buffer.length > j && index == -1) ; j++) {
+		for(int j = 0; this.listeChainee.getSlotCount()>j ; j++) {
 			//System.out.println("Index : " + index);
-			if(buffer[j]>0) /** PROBLÈME À PARTIR D'ICI : TOUTES LES CASES DU TABLEAU QUE LE BUFFERMANAGER RETOURNE SONT À ZÉRO**/
+			if(buffer[j]==0) { /** PROBLÈME À PARTIR D'ICI : TOUTES LES CASES DU TABLEAU QUE LE BUFFERMANAGER RETOURNE SONT À ZÉRO**/
 				index = j;
+				break;
+			}
 		}
 		writeRecordInBuffer (iRecord, buffer, index);
 		buffer[index]=1;

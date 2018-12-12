@@ -1,5 +1,6 @@
 package bufferManager;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import baseDeDonnee.PageId;
@@ -64,4 +65,12 @@ public class Frame {
 	public byte[] getBuffer() {
 		return buffer;
 	}
+
+	@Override
+	public String toString() {
+		return "Frame [loaded=" + loaded + ", id=" + id + ", dirtyFlag=" + dirtyFlag + ", pin_count=" + pin_count
+				+ ", lastUnpin=" + lastUnpin + ", buffer=" + Arrays.toString(buffer) + "]";
+	}
+	
+	
 }
