@@ -31,6 +31,11 @@ public class PageId {
 	public void setFileIdx(int fileIdx) {
 		this.fileIdx = fileIdx;
 	}
+
+	@Override
+	public String toString() {
+		return "PageId [pageIdx=" + pageIdx + ", fileIdx=" + fileIdx + "]";
+	}
 	
 
 }

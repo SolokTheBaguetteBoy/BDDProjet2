@@ -12,80 +12,103 @@ import headerPageInfo.HeaderPageInfo;
 
 public class HeapFile {
 
-	private RelDef listeChainee;
+	private RelDef relation;
 
-	private DiskManager dm;
-	private BufferManager bm;
-	public HeapFile(RelDef listeChainee) {
+
+	public HeapFile(RelDef relation) {
 		// TODO Auto-generated constructor stub
-		this.listeChainee = listeChainee;
-		this.dm = DiskManager.getInstance();
-		this.bm = BufferManager.getInstance();
+		this.relation = relation;
 	}
 
 	public void createNewOnDisk(int iFileIdx) throws IOException
 	{
 		HeaderPageInfo header = new HeaderPageInfo();
 		PageId pid = new PageId();
-		dm.createFile(iFileIdx);
-		dm.addPage(iFileIdx, pid);
-		header.writeToBuffer(bm.get(pid));
-		this.bm.free(pid, true);	
+		DiskManager.getInstance().createFile(iFileIdx);
+		DiskManager.getInstance().addPage(iFileIdx, pid);
+		BufferManager.getInstance().get(pid);
+		header.writeToBuffer(BufferManager.getInstance().get(pid));
+		BufferManager.getInstance().free(pid, true);	
 	}
 
 	public void getFreePageId(PageId oPageId) throws IOException
-	{
-		byte buffer[] = this.bm.get(oPageId);
-		HeaderPageInfo header = new HeaderPageInfo();
-		header.readFromBuffer(buffer);
-		for(CoupleEntiers c :header.getCouplesEntier())
+	{	
+		PageId header = new PageId(relation.getFileIdx(),0);
+		/**
+		 * Chercher une PageId qui vaut 0 dans le headerPage, la prendre puis l'insérer dans l
+		 */
+		System.out.println(oPageId);
+		byte buffer[] = BufferManager.getInstance().get(header);
+		System.out.println("Debut  getFBufferManagerreePageId " + getClass());
+		System.out.println("avant appel headerPage");
+		System.out.println("avant appel frame1 : " + BufferManager.getInstance().getFrame1());
+		System.out.println("avant appel frame2 : " + BufferManager.getInstance().getFrame2());
+		HeaderPageInfo headerPageInfo = new HeaderPageInfo();
+		headerPageInfo.readFromBuffer(buffer);System.out.println("apres appel headerPage");
+		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
+		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
+		for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
+		System.out.println("apres appel headerPage");
+		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
+		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
+		System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
+		for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
 		{
 			if(c.getFreeSlots() > 0)//vérifier qu'il reste des cases libres
 			{
-				oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
-				this.bm.free(oPageId, false); //Libération sans modification
-
-				return; //arrêt complet de la méthode
+				//oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
+				BufferManager.getInstance().free(oPageId, false); //Libération sans modification
+				System.out.println("FIN 1  getFreePageId " + getClass());
+				oPageId.setFileIdx(this.relation.getFileIdx());
+				oPageId.setPageIdx(c.getPageIdx());
+				BufferManager.getInstance().free(oPageId, false);
+				return; //arrêt complet de la méthodetrue
 
 			}
-		}
-			this.dm.addPage(oPageId.getFileIdx(), oPageId);
-			header.incrementer();
-			header.addToHeaderPageInfo(oPageId.getPageIdx(), this.listeChainee.getSlotCount());
-			this.bm.flushAll();//Actualisation complète ?
-			header.writeToBuffer(buffer);
-			this.bm.free(oPageId, true);
+		}	
+			DiskManager.getInstance().addPage(oPageId.getFileIdx(), oPageId);
+			System.out.println("nouvele page" + oPageId);
+			System.out.println("apres appel nouvele page");
+			System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
+			System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
+			System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
+			headerPageInfo.incrementer();
+			
+			//header.addToHeaderPageInfo(oPageId.getPageIdx(), this.relation.getSlotCount());
+			BufferManager.getInstance().flushAll();//Actualisation complète ?
+			headerPageInfo.writeToBuffer(buffer);
+			BufferManager.getInstance().free(header, true);
 
-			byte bufferNouvellePage[] = this.bm.get(oPageId);
-			for(int i = 0; i<this.listeChainee.getSlotCount(); i++)
+			byte bufferNouvellePage[] = BufferManager.getInstance().get(oPageId);
+			for(int i = 0; i<this.relation.getSlotCount(); i++)
 			{
 				bufferNouvellePage[i] = 0;
 			}
-			header.writeToBuffer(bufferNouvellePage);
-			this.bm.free(oPageId, true);
+			headerPageInfo.writeToBuffer(bufferNouvellePage);
+			BufferManager.getInstance().free(oPageId, true);
 			
-		
+			System.out.println("FIN 2  getFreePageId " + getClass());
 	}
 
 	public void updateHeaderWithTakenSlot(PageId iPageId) throws IOException
 	{
-		byte buffer[] = this.bm.get(iPageId);
+		byte buffer[] = BufferManager.getInstance().get(iPageId);
 		HeaderPageInfo header = new HeaderPageInfo();
 		header.writeToBuffer(buffer);
 		int freeSlots = header.getCoupleEntier(iPageId.getPageIdx()).getFreeSlots();
 		header.getCoupleEntier(iPageId.getPageIdx()).setFreeSlots(freeSlots --); //d�cr�menter cases dispo
 		header.writeToBuffer(buffer);
-		this.bm.flushAll(); //Actualisation
-		this.bm.free(iPageId,true);
+		BufferManager.getInstance().flushAll(); //Actualisation
+		BufferManager.getInstance().free(iPageId,true);
 
 	}
 
 	public RelDef getListe() {
-		return listeChainee;
+		return relation;
 	}
 
 	public void setListe(RelDef liste) {
-		this.listeChainee = liste;
+		this.relation = liste;
 	}
 
 	/** 
@@ -101,9 +124,9 @@ public class HeapFile {
 	{
 		//Retrouver les types de champs du Record
 
-		int position  = this.listeChainee.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
+		int position  = this.relation.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
 		ByteBuffer tempBuffer = ByteBuffer.wrap(ioBuffer);
-		ArrayList<String> TypeColonnes = this.listeChainee.getTypesColonne();
+		ArrayList<String> TypeColonnes = this.relation.getTypesColonne();
 		//Étape 1 : récupération des données et écriture en byte depuis ByteBuffer
 		for(int i = 0; i < TypeColonnes.size(); i++)
 		{
@@ -147,7 +170,7 @@ public class HeapFile {
 
 	public Rid insertRecordInPage(Record iRecord, PageId iPageId) throws FileNotFoundException, IOException
 	{
-		byte[] buffer = this.bm.get(iPageId);
+		byte[] buffer = BufferManager.getInstance().get(iPageId);
 		//System.out.println(buffer.length);
 		int index = -1;
 		//int i=0;
@@ -161,7 +184,7 @@ public class HeapFile {
 			System.out.print(buffer[i]);
 		}
 		
-		for(int j = 0; this.listeChainee.getSlotCount()>j ; j++) {
+		for(int j = 0; this.relation.getSlotCount()>j ; j++) {
 			//System.out.println("Index : " + index);
 			if(buffer[j]==0) { /** PROBLÈME À PARTIR D'ICI : TOUTES LES CASES DU TABLEAU QUE LE BUFFERMANAGER RETOURNE SONT À ZÉRO**/
 				index = j;
@@ -170,7 +193,7 @@ public class HeapFile {
 		}
 		writeRecordInBuffer (iRecord, buffer, index);
 		buffer[index]=1;
-		bm.free(iPageId, true);
+		BufferManager.getInstance().free(iPageId, true);
 		return (new Rid(iPageId,index));
 	}
 	
@@ -185,7 +208,7 @@ public class HeapFile {
 
 	public RelDef getRelDef()
 	{
-		return this.listeChainee;
+		return this.relation;
 	}
 
 	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
@@ -235,29 +258,29 @@ public class HeapFile {
 	public List<Record> getRecordsOnPage(PageId pid) {
 		// TODO Auto-generated method stub
 		List<Record> listeRecords = new ArrayList<>();
-		byte buffer[] = this.bm.get(pid);
-		for (int i = 0; i < this.listeChainee.getSlotCount(); i++) {
+		byte buffer[] = BufferManager.getInstance().get(pid);
+		for (int i = 0; i < this.relation.getSlotCount(); i++) {
 			if(buffer[i] != 0)//on vérifie si le slot n'est pas 0 (si le slot n'est pas vide)
 			{
 				listeRecords.add(this.readRecordFromBuffer(buffer, i));
 			}
 		}
-		this.bm.free(pid, false);
+		BufferManager.getInstance().free(pid, false);
 		return listeRecords;
 	}
 	
 	public ArrayList<PageId> getDataPagesId() {
 		// TODO Auto-generated method stub
 		ArrayList<PageId> pages = new ArrayList<>();
-		PageId headerPage = new PageId(this.listeChainee.getFileIdx(), 0);
-		byte buffer[] = this.bm.get(headerPage);
+		PageId headerPage = new PageId(this.relation.getFileIdx(), 0);
+		byte buffer[] = BufferManager.getInstance().get(headerPage);
 		
 		HeaderPageInfo hp = new HeaderPageInfo();
 		hp.readFromBuffer(buffer);
 		
 		for(CoupleEntiers c : hp.getCouplesEntier())
 			pages.add(new PageId(c.getPageIdx(),c.getFreeSlots()));
-		this.bm.free(headerPage, false);
+		BufferManager.getInstance().free(headerPage, false);
 		return pages;
 	}
 

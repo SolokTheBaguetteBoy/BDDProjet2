@@ -22,7 +22,10 @@ public class Frame {
 		loaded = false;
 		buffer = new byte[Constantes.pageSize];
 	}
-	
+	public Frame()
+	{
+		buffer = new byte [Constantes.pageSize];
+	}
 	public void incrementPinCount() {
 		pin_count++;
 	}
@@ -65,7 +68,26 @@ public class Frame {
 	public byte[] getBuffer() {
 		return buffer;
 	}
+	
 
+	public void setLoaded(boolean loaded) {
+		this.loaded = loaded;
+	}
+	public void setId(PageId id) {
+		this.id = id;
+	}
+	public void setDirtyFlag(boolean dirtyFlag) {
+		this.dirtyFlag = dirtyFlag;
+	}
+	public void setPin_count(int pin_count) {
+		this.pin_count = pin_count;
+	}
+	public void setLastUnpin(long lastUnpin) {
+		this.lastUnpin = lastUnpin;
+	}
+	public void setBuffer(byte[] buffer) {
+		this.buffer = buffer;
+	}
 	@Override
 	public String toString() {
 		return "Frame [loaded=" + loaded + ", id=" + id + ", dirtyFlag=" + dirtyFlag + ", pin_count=" + pin_count
