@@ -41,6 +41,7 @@ public class FileManager {
 		HeapFile createdHeapFile = new HeapFile(rd);
 		heapFileList.add(createdHeapFile);
 		heapFileList.get(heapFileList.size() - 1).createNewOnDisk(rd.getFileIdx());
+
 	}
 	
 	public Rid insertRecordInRelation(String RelationName, Record Record) throws IOException {

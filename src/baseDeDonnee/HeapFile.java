@@ -28,6 +28,7 @@ public class HeapFile {
 		DiskManager.getInstance().addPage(iFileIdx, pid);
 		BufferManager.getInstance().get(pid);
 		header.writeToBuffer(BufferManager.getInstance().get(pid));
+		System.out.println("pid = " + pid.getPageIdx());
 		BufferManager.getInstance().free(pid, true);	
 	}
 

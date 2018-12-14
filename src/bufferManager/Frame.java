@@ -32,7 +32,8 @@ public class Frame {
 	
 	public void decrementPinCount() {
 		pin_count--;
-		lastUnpin = System.currentTimeMillis();
+		if(pin_count == 0)//Le pin_count peut être supérieur à 1 si on a plusieurs utilisateurs qui utilisent une même page
+			lastUnpin = System.currentTimeMillis();
 	}
 	
 	public void frameContentModified() {

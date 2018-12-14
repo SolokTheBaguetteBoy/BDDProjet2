@@ -73,32 +73,42 @@ public class BufferManager {
 		}
 		else {
 			int frameToReplace = 0;
-			int minPinCount = 0;
-			if((bufferPool.get(0).getDirty() && bufferPool.get(1).getDirty())||(!bufferPool.get(0).getDirty() && !bufferPool.get(1).getDirty())) {
-				for(int j = 0; j < frameCount; j++) {
-					if(minPinCount > bufferPool.get(j).getPinCount() ) {
-						minPinCount = bufferPool.get(j).getPinCount();
-						frameToReplace = j;
-					}
-					else if(minPinCount == bufferPool.get(j).getPinCount() && bufferPool.get(frameToReplace).getLastUnpin() > bufferPool.get(j).getLastUnpin()) {
-						frameToReplace = j;
-					}
-				}
-				
-			}
-			else {
-				if(bufferPool.get(0).getDirty()) {
-					frameToReplace = 1;
-				}
-				if(bufferPool.get(1).getDirty()) {
+//			int minPinCount = 0;
+//			if((bufferPool.get(0).getDirty() && bufferPool.get(1).getDirty())||(!bufferPool.get(0).getDirty() && !bufferPool.get(1).getDirty())) {
+//				for(int indiceFrame = 0; indiceFrame < frameCount; indiceFrame++) {
+//					if(minPinCount > bufferPool.get(indiceFrame).getPinCount()) {
+//						minPinCount = bufferPool.get(indiceFrame).getPinCount();
+//						frameToReplace = indiceFrame;
+//					}
+//					else if(minPinCount == bufferPool.get(indiceFrame).getPinCount() && bufferPool.get(frameToReplace).getLastUnpin() > bufferPool.get(indiceFrame).getLastUnpin()) {
+//						frameToReplace = indiceFrame;
+//					}
+//				}
+//				
+//			}
+//			else {
+//				if(bufferPool.get(0).getDirty()) {
+//					frameToReplace = 1;
+//				}
+//				if(bufferPool.get(1).getDirty()) {
+//					frameToReplace = 0;
+//				}
+//			}
+			if(bufferPool.get(0).getPinCount() == 0)
+				frameToReplace = 0;
+			else if(bufferPool.get(1).getPinCount() == 0)
+				frameToReplace = 1;
+			else if(bufferPool.get(0).getPinCount() != 0 && bufferPool.get(1).getPinCount() != 0)
+			{
+				if(bufferPool.get(0).getLastUnpin() < bufferPool.get(1).getLastUnpin())
 					frameToReplace = 0;
-				}
+				else
+					frameToReplace = 1;
 			}
 			if(bufferPool.get(frameToReplace).getDirty()) {
 				try {
 					DiskManager.getInstance().writePage(bufferPool.get(frameToReplace).getPageId(), bufferPool.get(frameToReplace).getBuffer());
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -109,6 +119,8 @@ public class BufferManager {
 	}
 	
 	public void free(PageId pid, boolean dirty) {
+		System.out.println("Taille bufferPool : " + bufferPool.size());
+		System.out.println("Contenu bufferPool : " + bufferPool);
 		for(Frame f : bufferPool) {
 			
 			if(f.getPageId().equals(pid)) {
