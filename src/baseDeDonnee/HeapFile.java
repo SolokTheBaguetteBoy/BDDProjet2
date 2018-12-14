@@ -58,7 +58,6 @@ public class HeapFile {
 			if(c.getFreeSlots() > 0)//vérifier qu'il reste des cases libres
 			{
 				//oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
-				BufferManager.getInstance().free(oPageId, false); //Libération sans modification
 				System.out.println("FIN 1  getFreePageId " + getClass());
 				oPageId.setFileIdx(this.relation.getFileIdx());
 				oPageId.setPageIdx(c.getPageIdx());
@@ -75,7 +74,8 @@ public class HeapFile {
 			System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
 			headerPageInfo.incrementer();
 			
-			//header.addToHeaderPageInfo(oPageId.getPageIdx(), this.relation.getSlotCount());
+			headerPageInfo.addToHeaderPageInfo(oPageId.getPageIdx(), this.relation.getSlotCount());
+			updateHeaderWithTakenSlot(oPageId);
 			headerPageInfo.writeToBuffer(buffer);
 			BufferManager.getInstance().free(header, true);
 
@@ -94,11 +94,16 @@ public class HeapFile {
 	{
 		byte buffer[] = BufferManager.getInstance().get(iPageId);
 		HeaderPageInfo header = new HeaderPageInfo();
+		header.readFromBuffer(buffer);
+		for(int i = 0; i<header.getCouplesEntier().size();i++)
+		{
+			if(header.getCouplesEntier().get(i).getPageIdx() == iPageId.getPageIdx())
+			{
+				header.getCoupleEntier(i).setFreeSlots(header.getCoupleEntier(i).getFreeSlots() - 1);
+			}
+		}
+	
 		header.writeToBuffer(buffer);
-		int freeSlots = header.getCoupleEntier(iPageId.getPageIdx()).getFreeSlots();
-		header.getCoupleEntier(iPageId.getPageIdx()).setFreeSlots(freeSlots --); //d�cr�menter cases dispo
-		header.writeToBuffer(buffer);
-		BufferManager.getInstance().flushAll(); //Actualisation
 		BufferManager.getInstance().free(iPageId,true);
 
 	}

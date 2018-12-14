@@ -94,7 +94,7 @@ public class BufferManager {
 //				}
 //				if(bufferPool.get(1).getDirty()) {
 //					frameToReplace = 0;
-//				}
+//				}header
 //			}
 			if(bufferPool.get(0).getPinCount() == 0)
 				frameToReplace = 0;

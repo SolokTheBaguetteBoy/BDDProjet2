@@ -30,6 +30,7 @@ public class HeaderPageInfo {
 	}
 	
 	public CoupleEntiers getCoupleEntier (int i) {
+		System.out.println("Contenu couplesEntiers : " + couplesEntiers);
 		return couplesEntiers.get(i);
 	}
 	
