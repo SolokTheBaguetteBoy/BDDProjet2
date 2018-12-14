@@ -78,6 +78,7 @@ public class DBManager {
 			break;
 			
 		case "insert":
+			
 			ArrayList<String> valeurs = new ArrayList<String>();
 			for (int i = 2; i < splitCommand.length; i++) {
 				valeurs.add(splitCommand[i]);

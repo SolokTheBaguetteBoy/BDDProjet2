@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import bufferManager.BufferManager;
@@ -279,10 +280,8 @@ public class HeapFile {
 		ArrayList<PageId> pages = new ArrayList<>();
 		PageId headerPage = new PageId(this.relation.getFileIdx(), 0);
 		byte buffer[] = BufferManager.getInstance().get(headerPage);
-		
 		HeaderPageInfo hp = new HeaderPageInfo();
 		hp.readFromBuffer(buffer);
-		
 		for(CoupleEntiers c : hp.getCouplesEntier())
 			pages.add(new PageId(c.getPageIdx(),c.getFreeSlots()));
 		BufferManager.getInstance().free(headerPage, false);

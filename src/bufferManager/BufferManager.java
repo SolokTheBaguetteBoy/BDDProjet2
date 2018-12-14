@@ -70,7 +70,7 @@ public class BufferManager {
 		if(currentLoadedFrame < frameCount) {
 			currentLoadedFrame++;		
 			bufferPool.get(0).setId(pid);
-			System.err.println(bufferPool);
+			System.err.println("bufferpool : "+bufferPool);
 			return bufferPool.get(0).getBuffer();
 		}
 		else {
@@ -117,7 +117,7 @@ public class BufferManager {
 			System.out.println("Frame à remplacer : " + bufferPool.get(frameToReplace));
 			bufferPool.get(frameToReplace).setId(pid);
 			System.out.println("bufferPool : " + bufferPool);
-			return null;
+			return bufferPool.get(frameToReplace).getBuffer();
 		}
 	}
 	
@@ -125,8 +125,7 @@ public class BufferManager {
 		System.out.println("Taille bufferPool : " + bufferPool.size());
 		System.out.println("Contenu bufferPool : " + bufferPool);
 		for(Frame f : bufferPool) {
-			
-			if(f.getPageId().equals(pid)) {
+			if(pid.equals(f.getPageId())) {
 				f.decrementPinCount();
 				if(dirty == true) {
 					f.frameContentModified();
