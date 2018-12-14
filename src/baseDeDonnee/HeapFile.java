@@ -76,7 +76,6 @@ public class HeapFile {
 			headerPageInfo.incrementer();
 			
 			//header.addToHeaderPageInfo(oPageId.getPageIdx(), this.relation.getSlotCount());
-			BufferManager.getInstance().flushAll();//Actualisation complète ?
 			headerPageInfo.writeToBuffer(buffer);
 			BufferManager.getInstance().free(header, true);
 
@@ -256,7 +255,7 @@ public class HeapFile {
 	}
 
 
-	public List<Record> getRecordsOnPage(PageId pid) {
+	public List<Record> getRecordsOnPage(PageId pid) throws IOException {
 		// TODO Auto-generated method stub
 		List<Record> listeRecords = new ArrayList<>();
 		byte buffer[] = BufferManager.getInstance().get(pid);
@@ -270,7 +269,7 @@ public class HeapFile {
 		return listeRecords;
 	}
 	
-	public ArrayList<PageId> getDataPagesId() {
+	public ArrayList<PageId> getDataPagesId() throws IOException {
 		// TODO Auto-generated method stub
 		ArrayList<PageId> pages = new ArrayList<>();
 		PageId headerPage = new PageId(this.relation.getFileIdx(), 0);

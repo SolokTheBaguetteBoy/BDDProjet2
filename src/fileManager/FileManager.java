@@ -61,7 +61,7 @@ public class FileManager {
 		this.heapFileList.clear();
 	}
 	
-	public ArrayList<Record> getAllRecords(String RelationName){
+	public ArrayList<Record> getAllRecords(String RelationName) throws IOException{
 		HeapFile hf = getGivenHeapFile(RelationName);
 		ArrayList<PageId> listPids = hf.getDataPagesId();
 		ArrayList<Record> listRecordToReturn = new ArrayList<Record>();
@@ -80,7 +80,7 @@ public class FileManager {
 		return new HeapFile(new RelDef());
 	}
 	
-	public ArrayList<Record> getAllRecordsWithFilter(String RelationName, int idxCol, String valeur){
+	public ArrayList<Record> getAllRecordsWithFilter(String RelationName, int idxCol, String valeur) throws IOException{
 		ArrayList<Record> OGlist = getAllRecords(RelationName);
 		ArrayList<Record> filteredList = new ArrayList<Record>();
 		for(Record r : OGlist) {
@@ -91,7 +91,7 @@ public class FileManager {
 		return filteredList;
 	}
 	
-	public ArrayList<Record> join(String nomRelation1, String nomRelation2, int indiceCol1, int indiceCol2) {
+	public ArrayList<Record> join(String nomRelation1, String nomRelation2, int indiceCol1, int indiceCol2) throws IOException {
 		HeapFile hp1 = getGivenHeapFile(nomRelation1);
 		HeapFile hp2 = getGivenHeapFile(nomRelation2);
 		ArrayList<PageId> alpid1 = hp1.getDataPagesId();

@@ -2,6 +2,8 @@ package bufferManager;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+
 import org.junit.Test;
 
 import baseDeDonnee.PageId;
@@ -9,7 +11,7 @@ import baseDeDonnee.PageId;
 public class BufferManagerTest {
 
 	@Test
-	public void test() {
+	public void test() throws IOException {
 		BufferManager bm = BufferManager.getInstance();
 		PageId pid1 = new PageId(1, 1);
 		PageId pid2 = new PageId(2, 2);

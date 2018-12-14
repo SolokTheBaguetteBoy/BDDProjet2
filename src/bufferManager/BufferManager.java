@@ -39,7 +39,7 @@ public class BufferManager {
 		return INSTANCE; 
 	}
 	
-	public byte[] get(PageId pid) {
+	public byte[] get(PageId pid) throws IOException {
 		boolean pageFound = false;
 		System.out.println("Taille bufferpool : " + bufferPool.size());
 		for(Frame f : bufferPool) {
@@ -47,7 +47,7 @@ public class BufferManager {
 				pageFound = true;
 				f.incrementPinCount();
 				System.out.println(f);
-				return f.getBuffer();
+				return load(pid);
 			}
 			if((f.getPageId().getPageIdx() == pid.getPageIdx() && f.getPageId().getFileIdx() == pid.getFileIdx())) {
 				pageFound = true;
@@ -62,14 +62,16 @@ public class BufferManager {
 		return new byte[1]; //ne devrait jamais arriv� ici
 	}
 
-	private byte[] load(PageId pid) {
-		
-		Frame toAdd = new Frame();
-		toAdd.incrementPinCount();
+	private byte[] load(PageId pid) throws IOException {
+		System.out.println(pid);
+		DiskManager.getInstance().readPage(pid, getFrame1().getBuffer());
+		System.out.println(pid);
+		//toAdd.incrementPinCount();
 		if(currentLoadedFrame < frameCount) {
 			currentLoadedFrame++;		
-			bufferPool.add(toAdd);
-			return toAdd.getBuffer();
+			bufferPool.get(0).setId(pid);
+			System.err.println(bufferPool);
+			return bufferPool.get(0).getBuffer();
 		}
 		else {
 			int frameToReplace = 0;
@@ -112,9 +114,10 @@ public class BufferManager {
 					e.printStackTrace();
 				}
 			}
+			System.out.println("Frame à remplacer : " + bufferPool.get(frameToReplace));
 			bufferPool.get(frameToReplace).setId(pid);
 			System.out.println("bufferPool : " + bufferPool);
-			return toAdd.getBuffer();
+			return null;
 		}
 	}
 	
