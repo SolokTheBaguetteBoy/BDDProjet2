@@ -43,17 +43,19 @@ public class BufferManager {
 		boolean pageFound = false;
 		System.out.println("Taille bufferpool : " + bufferPool.size());
 		for(Frame f : bufferPool) {
-			if((f.getPageId() == null)) {
-				pageFound = true;
-				f.incrementPinCount();
-				System.out.println(f);
-				return load(pid);
-			}
-			if((f.getPageId().getPageIdx() == pid.getPageIdx() && f.getPageId().getFileIdx() == pid.getFileIdx())) {
-				pageFound = true;
-				f.incrementPinCount();
-				System.out.println(f);
-				return f.getBuffer();
+//			if((f.getPageId() == null)) {
+//				pageFound = true;
+//				f.incrementPinCount();
+//				System.out.println(f);
+//				return load(pid);
+//			}
+			if(f.getPageId() != null) {
+				if((f.getPageId().getPageIdx() == pid.getPageIdx() && f.getPageId().getFileIdx() == pid.getFileIdx())) {
+					pageFound = true;
+					f.incrementPinCount();
+					System.out.println(f);
+					return f.getBuffer();
+				}
 			}
 		}
 		if(pageFound == false) {
