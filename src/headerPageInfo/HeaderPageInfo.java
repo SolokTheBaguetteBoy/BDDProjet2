@@ -46,7 +46,7 @@ public class HeaderPageInfo {
 	
 	public void readFromBuffer(byte[] buffer) {
 		ByteBuffer b = ByteBuffer.wrap(buffer);
-		dataPageCount = b.getInt();
+		dataPageCount = b.getInt();//DataCount hasardeux à partir du moment où on veut insérer dans une autre page
 		System.out.println("DataCount : " + dataPageCount);
 		for(int i = 0; i < dataPageCount; i++) {
 			couplesEntiers.add(new CoupleEntiers(b.getInt(), b.getInt()));

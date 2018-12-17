@@ -14,6 +14,10 @@ import bufferManager.BufferManager;
 
 public class DBDef implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5832825649982903389L;
 	private ArrayList<RelDef> listeRelations;
 	private int compteurRelations;
 
@@ -52,7 +56,7 @@ public class DBDef implements Serializable{
 		this.compteurRelations = compteurRelations;
 	}
 
-	@SuppressWarnings("unchecked")
+
 	public void init() {
 		
 		File f = new File("DB/Catalog.def");
@@ -89,6 +93,11 @@ public class DBDef implements Serializable{
 		} else {
 		return;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "DBDef [listeRelations=" + listeRelations + ", compteurRelations=" + compteurRelations + "]";
 	}
 
 	public void finish() {

@@ -214,42 +214,38 @@ public class HeapFile {
 	}
 
 	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
-		System.out.println("SlotIdx recordFromBuffer : " + slotIdx);
+		//System.out.println("SlotIdx recordFromBuffer : " + slotIdx);
 		int position = this.relation.getSlotCount()+(slotIdx*relation.getRecordSize());
 		
 		System.out.println("Position lecture : " + position);
 		ByteBuffer b = ByteBuffer.wrap(buffer);
 		b.position(position);
 		ArrayList<String> record = new ArrayList<>();
-		String tempString = ""; //String temporaire pour le for
+		StringBuffer tempString; //String temporaire pour le for
 
 		Record result = new Record();
 		for(String relation_temp : relation.getTypesColonne())
 		{
-			System.out.println("for : " + relation_temp);
+			tempString = new StringBuffer("");
+			//System.out.println("for : " + relation_temp);
 			if(relation_temp.contains("string")) {
 				String[] s = relation_temp.split("string");
 				for(int j = 0; j<Integer.parseInt(s[1]); j++)
-				{
-					tempString += b.getChar();
-					System.out.println(tempString.toString());
-				}
+					tempString.append(b.getChar());
 			}
 			else {
 				switch(relation_temp) {
 					
 					case "int":
-						tempString += b.getInt();
+						tempString.append(b.getInt());
 						break;
 					case "float":
-						tempString += b.getFloat();
+						tempString.append(b.getFloat());
 						break;
 				}		
 			}
 			record.add(tempString.toString());
 		}
-		
-		System.out.println("enregistrement récupéré : " + record);
 		result.setValues(record);
 		return result;
 	}
@@ -257,7 +253,7 @@ public class HeapFile {
 
 	public List<Record> getRecordsOnPage(PageId pid) throws IOException {
 		// TODO Auto-generated method stub
-		System.out.println("getRecordsOnPage : "+ pid);
+		//System.out.println("getRecordsOnPage : "+ pid);
 		List<Record> listeRecords = new ArrayList<>();
 		byte buffer[] = BufferManager.getInstance().get(pid);
 		for (int i = 0; i < this.relation.getSlotCount(); i++) {
@@ -283,7 +279,7 @@ public class HeapFile {
 		HeaderPageInfo hp = new HeaderPageInfo();
 		hp.readFromBuffer(buffer);
 		for(CoupleEntiers c : hp.getCouplesEntier())
-			pages.add(new PageId(c.getPageIdx(),c.getFreeSlots()));
+			pages.add(new PageId(c.getPageIdx(),this.relation.getFileIdx()));
 		BufferManager.getInstance().free(headerPage, false);
 		return pages;
 	}

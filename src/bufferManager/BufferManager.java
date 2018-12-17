@@ -159,7 +159,10 @@ public class BufferManager {
 			if(f.getDirty() == true) {
 				DiskManager.getInstance().writePage(f.getPageId(), f.getBuffer());
 			}
+			f.setDirtyFlag(false);
+			f.setBuffer(new byte[Constantes.pageSize]);
 		}
+		
 		
 	}
 
