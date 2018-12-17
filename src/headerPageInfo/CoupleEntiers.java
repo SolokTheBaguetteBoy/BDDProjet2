@@ -22,4 +22,9 @@ public class CoupleEntiers {
     public int getFreeSlots() {
         return freeSlots;
     }
+
+	@Override
+	public String toString() {
+		return "CoupleEntiers [pageIdx=" + pageIdx + ", freeSlots=" + freeSlots + "]";
+	}
 }

@@ -12,7 +12,7 @@ public class RelDef implements Serializable{
 	
 	private String nomRelation;
 	private int nombreColonne;
-	private ArrayList<String> typesColonne; //changer en ArrayList<Type> quand la classe sera crée
+	private ArrayList<String> typesColonne; //changer en ArrayList<Type> quand la classe sera crï¿½e
 	
 	private int recordSize;
 	private int slotCount; // Nombres cases disponibles
@@ -65,6 +65,13 @@ public class RelDef implements Serializable{
 
 	public int getSlotCount() {
 		return slotCount;
+	}
+
+	@Override
+	public String toString() {
+		return "RelDef [nomRelation=" + nomRelation + ", nombreColonne=" + nombreColonne + ", typesColonne="
+				+ typesColonne + ", recordSize=" + recordSize + ", slotCount=" + slotCount + ", fileIdx=" + fileIdx
+				+ "]";
 	}
 
 	public void setSlotCount(int slotCount) {

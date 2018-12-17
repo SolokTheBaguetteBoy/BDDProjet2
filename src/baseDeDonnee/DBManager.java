@@ -111,6 +111,7 @@ public class DBManager {
 			break;
 		case "selectall":
 			List<Record> records = FileManager.getInstance().getAllRecords(splitCommand[1]);
+			System.err.println(records);
 			for (Record record : records) {
 				System.out.println(record);
 			}

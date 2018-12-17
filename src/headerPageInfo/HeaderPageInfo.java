@@ -6,6 +6,11 @@ import java.util.Arrays;
 
 public class HeaderPageInfo {
 
+	@Override
+	public String toString() {
+		return "HeaderPageInfo [dataPageCount=" + dataPageCount + ", couplesEntiers=" + couplesEntiers + "]";
+	}
+
 	private int dataPageCount;
 	private ArrayList<CoupleEntiers> couplesEntiers;
 	
@@ -42,6 +47,7 @@ public class HeaderPageInfo {
 	public void readFromBuffer(byte[] buffer) {
 		ByteBuffer b = ByteBuffer.wrap(buffer);
 		dataPageCount = b.getInt();
+		System.out.println("DataCount : " + dataPageCount);
 		for(int i = 0; i < dataPageCount; i++) {
 			couplesEntiers.add(new CoupleEntiers(b.getInt(), b.getInt()));
 		}

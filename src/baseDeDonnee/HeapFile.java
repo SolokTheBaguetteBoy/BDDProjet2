@@ -41,19 +41,20 @@ public class HeapFile {
 		 */
 		System.out.println(oPageId);
 		byte buffer[] = BufferManager.getInstance().get(header);
-		System.out.println("Debut  getFBufferManagerreePageId " + getClass());
-		System.out.println("avant appel headerPage");
-		System.out.println("avant appel frame1 : " + BufferManager.getInstance().getFrame1());
-		System.out.println("avant appel frame2 : " + BufferManager.getInstance().getFrame2());
+//		System.out.println("Debut  getFBufferManagerreePageId " + getClass());
+//		System.out.println("avant appel headerPage");
+//		System.out.println("avant appel frame1 : " + BufferManager.getInstance().getFrame1());
+//		System.out.println("avant appel frame2 : " + BufferManager.getInstance().getFrame2());
 		HeaderPageInfo headerPageInfo = new HeaderPageInfo();
-		headerPageInfo.readFromBuffer(buffer);System.out.println("apres appel headerPage");
-		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
-		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
-		for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
-		System.out.println("apres appel headerPage");
-		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
-		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
-		System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
+		headerPageInfo.readFromBuffer(buffer);
+		//System.out.println("apres appel headerPage");
+//		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
+//		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
+//		//for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
+//		System.out.println("apres appel headerPage");
+//		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
+//		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
+//		System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
 		for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
 		{
 			if(c.getFreeSlots() > 0)//vérifier qu'il reste des cases libres
@@ -68,24 +69,23 @@ public class HeapFile {
 			}
 		}	
 			DiskManager.getInstance().addPage(oPageId.getFileIdx(), oPageId);
-			System.out.println("nouvele page" + oPageId);
-			System.out.println("apres appel nouvele page");
-			System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
-			System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
-			System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
+//			System.out.println("nouvele page" + oPageId);
+//			System.out.println("apres appel nouvele page");
+//			System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
+//			System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
+//			System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
 			headerPageInfo.incrementer();
-			
 			headerPageInfo.addToHeaderPageInfo(oPageId.getPageIdx(), this.relation.getSlotCount());
-			updateHeaderWithTakenSlot(oPageId);
+			//updateHeaderWithTakenSlot(oPageId);
 			headerPageInfo.writeToBuffer(buffer);
 			BufferManager.getInstance().free(header, true);
 
 			byte bufferNouvellePage[] = BufferManager.getInstance().get(oPageId);
 			for(int i = 0; i<this.relation.getSlotCount(); i++)
-			{
 				bufferNouvellePage[i] = 0;
-			}
-			headerPageInfo.writeToBuffer(bufferNouvellePage);
+			
+			
+			headerPageInfo.writeToBuffer(buffer);
 			BufferManager.getInstance().free(oPageId, true);
 			
 			System.out.println("FIN 2  getFreePageId " + getClass());
@@ -93,19 +93,20 @@ public class HeapFile {
 
 	public void updateHeaderWithTakenSlot(PageId iPageId) throws IOException
 	{
-		byte buffer[] = BufferManager.getInstance().get(iPageId);
-		HeaderPageInfo header = new HeaderPageInfo();
-		header.readFromBuffer(buffer);
-		for(int i = 0; i<header.getCouplesEntier().size();i++)
+		PageId header = new PageId(relation.getFileIdx(),0);
+		byte buffer[] = BufferManager.getInstance().get(header);
+		HeaderPageInfo headerPageInfo = new HeaderPageInfo();
+		headerPageInfo.readFromBuffer(buffer);
+		for(int i = 0; i<headerPageInfo.getCouplesEntier().size();i++)
 		{
-			if(header.getCouplesEntier().get(i).getPageIdx() == iPageId.getPageIdx())
+			if(headerPageInfo.getCouplesEntier().get(i).getPageIdx() == iPageId.getPageIdx())
 			{
-				header.getCoupleEntier(i).setFreeSlots(header.getCoupleEntier(i).getFreeSlots() - 1);
+				headerPageInfo.getCoupleEntier(i).setFreeSlots(headerPageInfo.getCoupleEntier(i).getFreeSlots() - 1);
 			}
 		}
 	
-		header.writeToBuffer(buffer);
-		BufferManager.getInstance().free(iPageId,true);
+		headerPageInfo.writeToBuffer(buffer);
+		BufferManager.getInstance().free(header,true);
 
 	}
 
@@ -129,9 +130,12 @@ public class HeapFile {
 	public void writeRecordInBuffer(Record iRecord, byte[] ioBuffer, int iSlotIdx) throws FileNotFoundException, IOException
 	{
 		//Retrouver les types de champs du Record
-
-		int position  = this.relation.getSlotCount()+(iSlotIdx*iRecord.getValues().size());
+		System.err.println("Début writeRecordInBuffer " + iSlotIdx);
+		System.out.println("Avant écriture : " + Arrays.toString(ioBuffer));
+		int position  = this.relation.getSlotCount()+(iSlotIdx*this.relation.getRecordSize());
+		System.out.println("Position écriture : " + position);
 		ByteBuffer tempBuffer = ByteBuffer.wrap(ioBuffer);
+		tempBuffer.position(position);
 		ArrayList<String> TypeColonnes = this.relation.getTypesColonne();
 		//Étape 1 : récupération des données et écriture en byte depuis ByteBuffer
 		for(int i = 0; i < TypeColonnes.size(); i++)
@@ -159,9 +163,10 @@ public class HeapFile {
 
 		}
 		//Écriture dans le buffer
-		tempBuffer.position(position);
+		
 		ioBuffer = tempBuffer.array(); 
-
+		System.out.println("Après écriture " + Arrays.toString(ioBuffer));
+		System.err.println("Fin writeRecordInBuffer");
 
 	}
 
@@ -179,20 +184,10 @@ public class HeapFile {
 		byte[] buffer = BufferManager.getInstance().get(iPageId);
 		//System.out.println(buffer.length);
 		int index = -1;
-		//int i=0;
-//		do {
-//			System.out.println("index : " + index);
-//			if(buffer[i]>0)
-//				index = i;
-//			i++;
-//		}while(index==-1);
-		for (int i = 0; i < buffer.length; i++) {
-			System.out.print(buffer[i]);
-		}
 		
 		for(int j = 0; this.relation.getSlotCount()>j ; j++) {
 			//System.out.println("Index : " + index);
-			if(buffer[j]==0) { /** PROBLÈME À PARTIR D'ICI : TOUTES LES CASES DU TABLEAU QUE LE BUFFERMANAGER RETOURNE SONT À ZÉRO**/
+			if(buffer[j]==0) { 
 				index = j;
 				break;
 			}
@@ -200,6 +195,7 @@ public class HeapFile {
 		writeRecordInBuffer (iRecord, buffer, index);
 		buffer[index]=1;
 		BufferManager.getInstance().free(iPageId, true);
+		updateHeaderWithTakenSlot(iPageId);
 		return (new Rid(iPageId,index));
 	}
 	
@@ -207,7 +203,7 @@ public class HeapFile {
 	{
 		PageId tempPage =  new PageId();
 		getFreePageId(tempPage);
-
+		System.out.println("Temppage : " + tempPage);
 		return this.insertRecordInPage(iRecord,tempPage);
 		
 	}
@@ -218,55 +214,54 @@ public class HeapFile {
 	}
 
 	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
-
-		ByteBuffer b = ByteBuffer.wrap(buffer, slotIdx, buffer.length);
+		System.out.println("SlotIdx recordFromBuffer : " + slotIdx);
+		int position = this.relation.getSlotCount()+(slotIdx*relation.getRecordSize());
+		
+		System.out.println("Position lecture : " + position);
+		ByteBuffer b = ByteBuffer.wrap(buffer);
+		b.position(position);
 		ArrayList<String> record = new ArrayList<>();
-		byte recordByte[] = new byte[b.remaining()];//Récupère la taille de l'ensemble de bytes depuis le ByteBuffer
-		StringBuffer tempString = new StringBuffer(); //String temporaire pour le for
-
-
-		for(int i = 0; i < recordByte.length; i++)
-		{	
-			Integer tempInt = Integer.valueOf(b.getInt(i)) ;
-			Float tempFloat = Float.valueOf(b.getFloat(i)) ;
-			Character tempChar = Character.valueOf(b.getChar(i)) ;
-			if(tempInt != null)
-			{
-				record.add(Integer.toString(tempInt));
-
-			}
-			else if(tempFloat != null)
-			{
-				record.add(Float.toString(tempFloat));
-			}
-			else if((tempChar != null))
-			{
-
-				tempString.append(tempChar);
-
-			}
-
-			if(tempChar == null && tempString.length() != 0) {
-				record.add(tempString.toString());
-				tempString = new StringBuffer();
-			}
-
-
-		}
+		String tempString = ""; //String temporaire pour le for
 
 		Record result = new Record();
+		for(String relation_temp : relation.getTypesColonne())
+		{
+			System.out.println("for : " + relation_temp);
+			if(relation_temp.contains("string")) {
+				String[] s = relation_temp.split("string");
+				for(int j = 0; j<Integer.parseInt(s[1]); j++)
+				{
+					tempString += b.getChar();
+					System.out.println(tempString.toString());
+				}
+			}
+			else {
+				switch(relation_temp) {
+					
+					case "int":
+						tempString += b.getInt();
+						break;
+					case "float":
+						tempString += b.getFloat();
+						break;
+				}		
+			}
+			record.add(tempString.toString());
+		}
+		
+		System.out.println("enregistrement récupéré : " + record);
 		result.setValues(record);
 		return result;
-
 	}
 
 
 	public List<Record> getRecordsOnPage(PageId pid) throws IOException {
 		// TODO Auto-generated method stub
+		System.out.println("getRecordsOnPage : "+ pid);
 		List<Record> listeRecords = new ArrayList<>();
 		byte buffer[] = BufferManager.getInstance().get(pid);
 		for (int i = 0; i < this.relation.getSlotCount(); i++) {
-			if(buffer[i] != 0)//on vérifie si le slot n'est pas 0 (si le slot n'est pas vide)
+			if(buffer[i] == 1)//on vérifie si le slot n'est pas 0 (si le slot n'est pas vide)
 			{
 				listeRecords.add(this.readRecordFromBuffer(buffer, i));
 			}
@@ -275,6 +270,11 @@ public class HeapFile {
 		return listeRecords;
 	}
 	
+	@Override
+	public String toString() {
+		return "HeapFile [relation=" + relation + "]";
+	}
+
 	public ArrayList<PageId> getDataPagesId() throws IOException {
 		// TODO Auto-generated method stub
 		ArrayList<PageId> pages = new ArrayList<>();

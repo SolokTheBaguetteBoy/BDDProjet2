@@ -7,11 +7,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import bufferManager.BufferManager;
 
-public class DBDef {
+public class DBDef implements Serializable{
 
 	private ArrayList<RelDef> listeRelations;
 	private int compteurRelations;
@@ -62,14 +63,14 @@ public class DBDef {
 				
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 				
-				this.compteurRelations = ois.readInt();
 				
 				try {
 					Object obj = ois.readObject();
 					
 					if (obj != null)
 					{							
-						this.listeRelations = (ArrayList<RelDef>) obj;
+						INSTANCE = (DBDef) obj; 
+						System.out.println("Fichier trouvé");
 					}
 				} catch (EOFException msg) {
 					msg.printStackTrace();
@@ -81,10 +82,10 @@ public class DBDef {
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			} 
-			/*System.out.println(compteurRelations);
+			System.out.println(compteurRelations);
 			for (RelDef relDef : listeRelations) {
 				System.out.println(relDef.getFileIdx() + " " + relDef.getNomRelation());
-			}*/
+			}
 		} else {
 		return;
 		}
@@ -98,9 +99,7 @@ public class DBDef {
 
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 
-			oos.writeInt(compteurRelations);
-
-			oos.writeObject(listeRelations);
+			oos.writeObject(DBDef.getInstance());
 
 			oos.close();
 			BufferManager.getInstance().flushAll();

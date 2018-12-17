@@ -12,7 +12,7 @@ import baseDeDonnee.Rid;
 
 public class FileManager {
 
-	private ArrayList<HeapFile> heapFileList;
+	private static ArrayList<HeapFile> heapFileList;
 	
 	private static FileManager INSTANCE = null;
 
@@ -28,6 +28,7 @@ public class FileManager {
 		{
 			INSTANCE = new FileManager();
 		}
+		
 		return INSTANCE;
 	}
 	
@@ -38,6 +39,7 @@ public class FileManager {
 	}
 	
 	public void createNewHeapFile(RelDef rd) throws IOException {
+		System.err.println("Relations : " + heapFileList);
 		HeapFile createdHeapFile = new HeapFile(rd);
 		heapFileList.add(createdHeapFile);
 		heapFileList.get(heapFileList.size() - 1).createNewOnDisk(rd.getFileIdx());

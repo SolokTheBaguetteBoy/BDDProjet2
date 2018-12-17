@@ -18,6 +18,11 @@ public class Record {
 		this.values = values;
 	}
 	
+	@Override
+	public String toString() {
+		return "Record [values=" + values + "]";
+	}
+
 	public String getValueForCol(int idxCol) {
 		return values.get(idxCol);
 	}
