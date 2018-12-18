@@ -1,5 +1,8 @@
 package headerPageInfo;
 
+/**
+ * La classe CoupleEntiers associe un index de page à son nombre de slots libres
+ */
 public class CoupleEntiers {
 
     private int pageIdx;

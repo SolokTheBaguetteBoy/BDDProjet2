@@ -39,7 +39,7 @@ public class FileManager {
 	}
 	
 	public void createNewHeapFile(RelDef rd) throws IOException {
-		System.err.println("Relations : " + heapFileList);
+		//System.err.println("Relations : " + heapFileList);
 		HeapFile createdHeapFile = new HeapFile(rd);
 		heapFileList.add(createdHeapFile);
 		heapFileList.get(heapFileList.size() - 1).createNewOnDisk(rd.getFileIdx());
@@ -63,6 +63,12 @@ public class FileManager {
 		this.heapFileList.clear();
 	}
 	
+	/**
+	 * Renvoie la liste de tous les records d'une relation
+	 * @param RelationName -> le nom de la relation
+	 * @return -> la liste de records
+	 * @throws IOException
+	 */
 	public ArrayList<Record> getAllRecords(String RelationName) throws IOException{
 		HeapFile hf = getGivenHeapFile(RelationName);
 		ArrayList<PageId> listPids = hf.getDataPagesId();
@@ -73,6 +79,11 @@ public class FileManager {
 		return listRecordToReturn;
 	}
 	
+	/**
+	 * Renvoie le HeapFile correspondant à une relation
+	 * @param RelationName -> le nom de la relation
+	 * @return -> le HeapFile correspondant
+	 */
 	private HeapFile getGivenHeapFile(String RelationName) {
 		for(HeapFile hf : heapFileList) {
 			if(hf.getRelDef().getNom().equals(RelationName)){
@@ -82,6 +93,14 @@ public class FileManager {
 		return new HeapFile(new RelDef());
 	}
 	
+	/**
+	 * Renvoie tous les records selon un paramètre (select)
+	 * @param RelationName -> le nom de la relation à afficher
+	 * @param idxCol -> la colonne à filtrer
+	 * @param valeur -> la valeur à filtrer
+	 * @return la liste des records de la relation filtrée
+	 * @throws IOException
+	 */
 	public ArrayList<Record> getAllRecordsWithFilter(String RelationName, int idxCol, String valeur) throws IOException{
 		ArrayList<Record> OGlist = getAllRecords(RelationName);
 		ArrayList<Record> filteredList = new ArrayList<Record>();
@@ -93,6 +112,15 @@ public class FileManager {
 		return filteredList;
 	}
 	
+	/**
+	 * 
+	 * @param nomRelation1
+	 * @param nomRelation2
+	 * @param indiceCol1
+	 * @param indiceCol2
+	 * @return
+	 * @throws IOException
+	 */
 	public ArrayList<Record> join(String nomRelation1, String nomRelation2, int indiceCol1, int indiceCol2) throws IOException {
 		HeapFile hp1 = getGivenHeapFile(nomRelation1);
 		HeapFile hp2 = getGivenHeapFile(nomRelation2);
