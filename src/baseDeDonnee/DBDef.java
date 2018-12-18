@@ -73,7 +73,9 @@ public class DBDef implements Serializable{
 					
 					if (obj != null)
 					{							
-						INSTANCE = (DBDef) obj; 
+						DBDef temp = (DBDef) obj; 
+						this.setCompteurRelations(temp.getCompteurRelations());
+						this.setListeRelations(temp.getListeRelations());
 						System.out.println("Fichier trouvé");
 					}
 				} catch (EOFException msg) {
@@ -108,7 +110,7 @@ public class DBDef implements Serializable{
 
 			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(f));
 
-			oos.writeObject(DBDef.getInstance());
+			oos.writeObject(this);
 
 			oos.close();
 			BufferManager.getInstance().flushAll();

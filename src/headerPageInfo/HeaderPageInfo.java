@@ -4,6 +4,18 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * @author ik04346
+ *
+ */
+/**
+ * @author ik04346
+ *
+ */
+/**
+ * @author ik04346
+ *
+ */
 public class HeaderPageInfo {
 
 	@Override
@@ -45,6 +57,11 @@ public class HeaderPageInfo {
 		return couplesEntiers;
 	}
 	
+	
+	/**
+	 * Lit les couples depuis le buffer (on rajoute les couples lus dans la liste des couples entiers)
+	 * @param buffer -> le buffer à lire
+	 */
 	public void readFromBuffer(byte[] buffer) {
 		System.err.println("Début readFromBuffer " + Arrays.toString(buffer));
 		ByteBuffer b = ByteBuffer.wrap(buffer);
@@ -56,6 +73,11 @@ public class HeaderPageInfo {
 		System.err.println("Fin readFromBuffer " + Arrays.toString(buffer));
 	}
 	
+	
+	/**
+	 * Renseigne les couples dans le buffer
+	 * @param buffer -> buffer à remplir
+	 */
 	public void writeToBuffer(byte[] buffer) {
 		ByteBuffer b = ByteBuffer.wrap(buffer);
 		b.putInt(dataPageCount);

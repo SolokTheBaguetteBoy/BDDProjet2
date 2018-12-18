@@ -1,9 +1,14 @@
 package baseDeDonnee;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Record {
+public class Record implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2035518808407956007L;
 	private ArrayList<String> values;
 	
 	public Record() {
