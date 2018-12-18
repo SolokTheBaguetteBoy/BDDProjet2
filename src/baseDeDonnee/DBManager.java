@@ -93,7 +93,7 @@ public class DBManager {
 		case "fill":
 			ArrayList<String> lignes = new ArrayList<String>();
 			lignes = getLinesFromCSV(splitCommand[2]);
-			
+			System.err.println("TAILLE LIGNES : " + lignes.size());
 			for (String string : lignes) 
 			{
 				ArrayList<String> values = new ArrayList<String>();
@@ -147,7 +147,7 @@ public class DBManager {
 			
 			String str = new String(res);
 			String[] ligne = str.split("\\r?\\n");
-			
+			System.out.println(Arrays.toString(ligne));
 			for (int i = 0; i < ligne.length; i++) 
 			{
 				values.add(ligne[i]);
@@ -222,7 +222,7 @@ public class DBManager {
 		}
 		
 		def.setRecordSize(recordSize);
-		def.setSlotCount(Constantes.pageSize / recordSize);
+		def.setSlotCount(Constantes.pageSize / (recordSize + 1));
 		def.setFileIdx(DBDef.getInstance().getCompteurRelations());
 		
 		

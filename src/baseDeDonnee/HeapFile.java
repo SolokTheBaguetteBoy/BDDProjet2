@@ -27,7 +27,7 @@ public class HeapFile {
 		PageId pid = new PageId();
 		DiskManager.getInstance().createFile(iFileIdx);
 		DiskManager.getInstance().addPage(iFileIdx, pid);
-		BufferManager.getInstance().get(pid);
+		//BufferManager.getInstance().get(pid);
 		header.writeToBuffer(BufferManager.getInstance().get(pid));
 		System.out.println("pid = " + pid.getPageIdx());
 		BufferManager.getInstance().free(pid, true);	
@@ -41,24 +41,15 @@ public class HeapFile {
 		 */
 		System.out.println(oPageId);
 		byte buffer[] = BufferManager.getInstance().get(header);
-//		System.out.println("Debut  getFBufferManagerreePageId " + getClass());
-//		System.out.println("avant appel headerPage");
-//		System.out.println("avant appel frame1 : " + BufferManager.getInstance().getFrame1());
-//		System.out.println("avant appel frame2 : " + BufferManager.getInstance().getFrame2());
 		HeaderPageInfo headerPageInfo = new HeaderPageInfo();
 		headerPageInfo.readFromBuffer(buffer);
-		//System.out.println("apres appel headerPage");
-//		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
-//		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
-//		//for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
-//		System.out.println("apres appel headerPage");
-//		System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
-//		System.out.println("apres appel frame2 : " + BufferManager.getInstance().getFrame2());
-//		System.out.println("Taille couple : " + headerPageInfo.getCouplesEntier().size());
+
 		for(CoupleEntiers c :headerPageInfo.getCouplesEntier())
 		{
+			System.err.println("FREE SLOTS C " + c.getFreeSlots());
 			if(c.getFreeSlots() > 0)//vérifier qu'il reste des cases libres
 			{
+				
 				//oPageId.setPageIdx(c.getPageIdx());//On remplit la page de libre
 				System.out.println("FIN 1  getFreePageId " + getClass());
 				oPageId.setFileIdx(this.relation.getFileIdx());
@@ -68,6 +59,7 @@ public class HeapFile {
 
 			}
 		}	
+			
 			DiskManager.getInstance().addPage(oPageId.getFileIdx(), oPageId);
 //			System.out.println("nouvele page" + oPageId);
 //			System.out.println("apres appel nouvele page");

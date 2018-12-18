@@ -24,6 +24,6 @@ public class Record {
 	}
 
 	public String getValueForCol(int idxCol) {
-		return values.get(idxCol);
+		return values.get(idxCol - 1);
 	}
 }

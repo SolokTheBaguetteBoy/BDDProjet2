@@ -32,6 +32,7 @@ public class HeaderPageInfo {
 	
 	
 	public void addToHeaderPageInfo(int pageIdx, int freeSlots) {
+		System.out.println("\n addToHeaderPageInfo() freeslots : " + freeSlots);
 		couplesEntiers.add(new CoupleEntiers(pageIdx, freeSlots));
 	}
 	
