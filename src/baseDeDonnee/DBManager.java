@@ -17,6 +17,9 @@ import util.Constantes;
 
 public class DBManager {
 
+	/**
+	 * Constructeur vide de DBManager
+	 */
 	private DBManager() {
 
 	}
@@ -24,6 +27,10 @@ public class DBManager {
 	// Singleton
 	private static DBManager INSTANCE = null;
 	
+	/**
+	 * Getter de l'Instance Unique de DBManager
+	 * @return L'instance unique de la DBManager
+	 */
 	public static DBManager getInstance() {
 
 		if (INSTANCE == null) {
@@ -35,7 +42,7 @@ public class DBManager {
 
 	
 	/**
-	 * Initialise le syst�me
+	 * Initialise le systeme
 	 */
 	public void init() {
 		DBDef.getInstance().init();
@@ -44,7 +51,7 @@ public class DBManager {
 
 	
 	/**
-	 * Termine le syst�me et sauvegarde les donn�es persistantes
+	 * Termine le systeme et sauvegarde les donnees persistantes
 	 */
 	public void finish() {
 		DBDef.getInstance().finish();
@@ -52,8 +59,8 @@ public class DBManager {
 
 	
 	/**
-	 * Appelle l'action correspondant � la commande
-	 * @param command la commande � effectuer avec les param�tres
+	 * Appelle l'action correspondant a la commande
+	 * @param command la commande a effectuer avec les param�tres
 	 * @throws NumberFormatException
 	 * @throws FileNotFoundException
 	 * @throws IOException
@@ -132,6 +139,11 @@ public class DBManager {
 	}
 	
 	
+	/**
+	 * Fonction permettant de recuperer des valeurs contenues dans un fichier et les ajouter a la base de donnees
+	 * @param fileName nom d'un fichier
+	 * @return ArrayList(String) values contenant des valeurs trouvees dans le fichier
+	 */
 	public ArrayList<String> getLinesFromCSV(String fileName){
 		File file = new File(fileName);
 		
@@ -161,7 +173,7 @@ public class DBManager {
 	
 	
 	/**
-	 * Vide le dossier DB et remet le buffer manager, DBDef et file manager � 0
+	 * Vide le dossier DB et remet le buffer manager, DBDef et file manager a 0
 	 */
 	public void clean() {
 		
@@ -200,11 +212,11 @@ public class DBManager {
 	
 	
 	/**
-	 * Cr�e une relation dans DBDef et le Heap File correspondant
-	 * @param nomRelation le nom de la relation � cr�er
+	 * Cree une relation dans DBDef et le Heap File correspondant
+	 * @param nomRelation le nom de la relation a creer
 	 * @param nombreColonne le nombre de colonne de la table
 	 * @param typesColonne les types des colonnes
-	 * @throws FileNotFoundException si le fichier n'est pas trouv�
+	 * @throws FileNotFoundException si le fichier n'est pas trouve
 	 * @throws IOException
 	 */
 	public void createRelation(String nomRelation, int nombreColonne, ArrayList<String> typesColonne) throws FileNotFoundException, IOException {

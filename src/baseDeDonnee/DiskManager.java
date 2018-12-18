@@ -13,10 +13,17 @@ import util.Constantes;
 public class DiskManager {
 
 	private static DiskManager INSTANCE = null;
-
+	
+	/**
+	 * Constructeur vide de DBManager
+	 */
 	private DiskManager() {
 	}
-
+	
+	/**
+	 * Getter de l'Instance Unique du DiskManager
+	 * @return L'instance unique de DiskManager
+	 */
 	public static DiskManager getInstance() {
 
 		if (INSTANCE == null) 
@@ -26,11 +33,22 @@ public class DiskManager {
 		return INSTANCE;
 	}
 	
+	/**
+	 * Creer un fichier avec l'index renseigne
+	 * @param iFileIdx index du fichier cree
+	 */
 	public void createFile(int iFileIdx) {
 		File f = new File("DB/Data_" + iFileIdx + ".rf");
 		
 	}
 	
+	
+	/**
+	 * Rajoute une page au DiskManager
+	 * @param iFileIdx index du fichier rajoute
+	 * @param oPageId PageId de la page
+	 * @throws IOException
+	 */
 	public void addPage(int iFileIdx, PageId oPageId) throws IOException {
 		File f = new File("DB/Data_" + iFileIdx + ".rf");
 		
@@ -44,6 +62,12 @@ public class DiskManager {
 		fos.close();
 	}
 	
+	/**
+	 * Fonction permettant la lecture d'une page
+	 * @param iPageId de la page lue
+	 * @param oBuffer buffer ou l'on va lire la page
+	 * @throws IOException
+	 */
 	public void readPage(PageId iPageId, byte[] oBuffer) throws IOException {
 //		
 //		File f = new File("DB/Data_" + iPageId.getFileIdx() + ".rf");
@@ -61,6 +85,12 @@ public class DiskManager {
 		
 	}
 	
+	/**
+	 * Fonction permettant d'ecrire sur une page
+	 * @param iPageId de la page sur laquelle on ecrit
+	 * @param iBuffer qu'on va ecrire dans la page
+	 * @throws IOException
+	 */
 	public void writePage(PageId iPageId, byte[] iBuffer) throws IOException {
 		
 		String name = "DB/Data_" + iPageId.getFileIdx() + ".rf";
