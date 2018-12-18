@@ -16,15 +16,27 @@ public class BufferManager {
 	private static BufferManager INSTANCE = null;
 	
 	
+	/**
+	 * Getter de la premiere frame
+	 * @return La Frame d'indice 0
+	 */
 	public Frame getFrame1() {
 		return bufferPool.get(0);
 	}
 	
+	/**
+	 * Getter de la deuxieme frame
+	 * @return La Frame d'indice 1
+	 */
 	public Frame getFrame2() {
 		return bufferPool.get(1);
 	}
 	
 	
+	/**
+	 * Getter de l'instance unique de BufferManager
+	 * @return L'instance unique du BufferManager
+	 */
 	public static BufferManager getInstance() {
 		
 		
@@ -39,6 +51,12 @@ public class BufferManager {
 		return INSTANCE; 
 	}
 	
+	/**
+	 * Recupere la page voulue
+	 * @param pid PageId de la page demandee par l'utilisateur
+	 * @return Byte[] Buffer rempli avec la page demandee
+	 * @throws IOException
+	 */
 	public byte[] get(PageId pid) throws IOException {
 		//boolean pageFound = false;
 		System.out.println("Taille bufferpool : " + bufferPool.size());
@@ -46,14 +64,14 @@ public class BufferManager {
 			if((f.getPageId() == null)) {
 				f.setId(pid);
 				f.incrementPinCount();
-				System.out.println(f);
+				//System.out.println(f);
 				return f.getBuffer();
 			}
 			if(f.getPageId() != null) {
 				if((f.getPageId().getPageIdx() == pid.getPageIdx() && f.getPageId().getFileIdx() == pid.getFileIdx())) {
 					//pageFound = true;
 					f.incrementPinCount();
-					System.out.println("get() trouvé : " + f);
+					//System.out.println("get() trouve : " + f);
 					return f.getBuffer();
 				}
 			}
@@ -70,12 +88,18 @@ public class BufferManager {
 		
 		bufferPool.get(indice).incrementPinCount();
 		//bufferPool.get(indice).setBuffer(new byte[Constantes.pageSize]);
-		System.out.println("BufferManager get(pid) pid = " + pid);
+		//System.out.println("BufferManager get(pid) pid = " + pid);
 		DiskManager.getInstance().readPage(bufferPool.get(indice).getPageId(), bufferPool.get(indice).getBuffer());
 		
 		return bufferPool.get(indice).getBuffer();
 	}
 
+	/**
+	 * Recupere l'indice de la frame voulue
+	 * @param pid PageId de la frame voulue
+	 * @return int indice de la frame voulue
+	 * @throws IOException
+	 */
 	private int load(PageId pid) throws IOException {
 		
 		for(int i = 0; i<bufferPool.size(); i++)
@@ -91,8 +115,8 @@ public class BufferManager {
 	
 	/**
 	 * Libere la page d'un utilisateur
-	 * @param pid
-	 * @param dirty
+	 * @param pid de la page liberee
+	 * @param dirty le dirtyFlag nous disant si la page a ete modifiee ou pas
 	 */
 	public void free(PageId pid, boolean dirty) {
 		System.out.println("Taille bufferPool : " + bufferPool.size());
