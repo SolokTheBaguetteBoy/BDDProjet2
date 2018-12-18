@@ -3,6 +3,9 @@ package baseDeDonnee;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * RelDef correspond à une relation
+ */
 public class RelDef implements Serializable{
 
 	/**
@@ -11,13 +14,16 @@ public class RelDef implements Serializable{
 	private static final long serialVersionUID = 2317310855096968870L;
 	
 	private String nomRelation;
+	
 	private int nombreColonne;
+	
 	private ArrayList<String> typesColonne; //changer en ArrayList<Type> quand la classe sera cr�e
 	
-	private int recordSize;
+	private int recordSize; // Taille d'un enregistrement
+	
 	private int slotCount; // Nombres cases disponibles
 	
-	private int fileIdx;
+	private int fileIdx; // Index du fichier
 	
 	
 	public RelDef(String nomRelation, int nombreColonne, ArrayList<String> typesColonne){
