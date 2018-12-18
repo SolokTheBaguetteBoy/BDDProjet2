@@ -46,12 +46,14 @@ public class HeaderPageInfo {
 	}
 	
 	public void readFromBuffer(byte[] buffer) {
+		System.err.println("Début readFromBuffer " + Arrays.toString(buffer));
 		ByteBuffer b = ByteBuffer.wrap(buffer);
-		dataPageCount = b.getInt();//DataCount hasardeux à partir du moment où on veut insérer dans une autre page
+		dataPageCount = b.getInt();//DataCount pas bon (maxi : 2^24) à partir du moment où on veut insérer dans une autre page
 		System.out.println("DataCount : " + dataPageCount);
 		for(int i = 0; i < dataPageCount; i++) {
 			couplesEntiers.add(new CoupleEntiers(b.getInt(), b.getInt()));
 		}
+		System.err.println("Fin readFromBuffer " + Arrays.toString(buffer));
 	}
 	
 	public void writeToBuffer(byte[] buffer) {

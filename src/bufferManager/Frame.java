@@ -12,7 +12,7 @@ public class Frame {
 	private PageId id;
 	private boolean dirtyFlag;
 	private int pin_count;
-	private long lastUnpin;
+	//private long lastUnpin;
 	private byte[] buffer;
 	
 	public Frame(PageId pid) {
@@ -32,8 +32,8 @@ public class Frame {
 	
 	public void decrementPinCount() {
 		pin_count--;
-		if(pin_count == 0)//Le pin_count peut être supérieur à 1 si on a plusieurs utilisateurs qui utilisent une même page
-			lastUnpin = System.currentTimeMillis();
+//		if(pin_count == 0)//Le pin_count peut être supérieur à 1 si on a plusieurs utilisateurs qui utilisent une même page
+//			lastUnpin = System.currentTimeMillis();
 	}
 	
 	public void frameContentModified() {
@@ -62,9 +62,9 @@ public class Frame {
 		return dirtyFlag;
 	}
 	
-	public long getLastUnpin() {
-		return lastUnpin;
-	}
+//	public long getLastUnpin() {
+//		return lastUnpin;
+//	}
 	
 	public byte[] getBuffer() {
 		return buffer;
@@ -83,17 +83,17 @@ public class Frame {
 	public void setPin_count(int pin_count) {
 		this.pin_count = pin_count;
 	}
-	public void setLastUnpin(long lastUnpin) {
-		this.lastUnpin = lastUnpin;
-	}
+//	public void setLastUnpin(long lastUnpin) {
+//		this.lastUnpin = lastUnpin;
+//	}
 	public void setBuffer(byte[] buffer) {
 		this.buffer = buffer;
 	}
 	@Override
 	public String toString() {
 		return "Frame [loaded=" + loaded + ", id=" + id + ", dirtyFlag=" + dirtyFlag + ", pin_count=" + pin_count
-				+ ", lastUnpin=" + lastUnpin + ", buffer=" + Arrays.toString(buffer) + "]";
+				+ ", buffer=" + Arrays.toString(buffer) + "]";
 	}
-	
+
 	
 }

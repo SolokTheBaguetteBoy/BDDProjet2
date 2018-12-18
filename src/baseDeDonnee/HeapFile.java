@@ -24,7 +24,7 @@ public class HeapFile {
 	public void createNewOnDisk(int iFileIdx) throws IOException
 	{
 		HeaderPageInfo header = new HeaderPageInfo();
-		PageId pid = new PageId();
+		PageId pid = new PageId(0,iFileIdx);
 		DiskManager.getInstance().createFile(iFileIdx);
 		DiskManager.getInstance().addPage(iFileIdx, pid);
 		//BufferManager.getInstance().get(pid);
@@ -35,7 +35,7 @@ public class HeapFile {
 
 	public void getFreePageId(PageId oPageId) throws IOException
 	{	
-		PageId header = new PageId(relation.getFileIdx(),0);
+		PageId header = new PageId(0,relation.getFileIdx());
 		/**
 		 * Chercher une PageId qui vaut 0 dans le headerPage, la prendre puis l'insérer dans l
 		 */
@@ -54,12 +54,12 @@ public class HeapFile {
 				System.out.println("FIN 1  getFreePageId " + getClass());
 				oPageId.setFileIdx(this.relation.getFileIdx());
 				oPageId.setPageIdx(c.getPageIdx());
-				BufferManager.getInstance().free(oPageId, false);
+				BufferManager.getInstance().free(header, false);
 				return; //arrêt complet de la méthodetrue
 
 			}
 		}	
-			
+			System.err.println("  add page");
 			DiskManager.getInstance().addPage(oPageId.getFileIdx(), oPageId);
 //			System.out.println("nouvele page" + oPageId);
 //			System.out.println("apres appel nouvele page");
@@ -70,22 +70,24 @@ public class HeapFile {
 			headerPageInfo.addToHeaderPageInfo(oPageId.getPageIdx(), this.relation.getSlotCount());
 			//updateHeaderWithTakenSlot(oPageId);
 			headerPageInfo.writeToBuffer(buffer);
+			System.out.println("Buffer dans getFreePageId : " + Arrays.toString(buffer));
 			BufferManager.getInstance().free(header, true);
 
 			byte bufferNouvellePage[] = BufferManager.getInstance().get(oPageId);
 			for(int i = 0; i<this.relation.getSlotCount(); i++)
 				bufferNouvellePage[i] = 0;
 			
+			System.out.println("FIN 2  getFreePageId " + getClass());
+			//headerPageInfo.writeToBuffer(buffer);
 			
-			headerPageInfo.writeToBuffer(buffer);
 			BufferManager.getInstance().free(oPageId, true);
 			
-			System.out.println("FIN 2  getFreePageId " + getClass());
+			
 	}
 
 	public void updateHeaderWithTakenSlot(PageId iPageId) throws IOException
 	{
-		PageId header = new PageId(relation.getFileIdx(),0);
+		PageId header = new PageId(0,relation.getFileIdx());
 		byte buffer[] = BufferManager.getInstance().get(header);
 		HeaderPageInfo headerPageInfo = new HeaderPageInfo();
 		headerPageInfo.readFromBuffer(buffer);
@@ -162,7 +164,7 @@ public class HeapFile {
 
 	}
 
-	/** NARESH
+	/** 
 	 * 	Méthode qui prend en argument un Record IRecord et un PageId iPageId et qui retourne un Rid
 	 *  @param iRecord de type Record
 	 *  @param iPageId de type PageId
@@ -176,7 +178,7 @@ public class HeapFile {
 		byte[] buffer = BufferManager.getInstance().get(iPageId);
 		//System.out.println(buffer.length);
 		int index = -1;
-		
+		System.err.println("Buffer InsertRecordInPage" +Arrays.toString(buffer));
 		for(int j = 0; this.relation.getSlotCount()>j ; j++) {
 			//System.out.println("Index : " + index);
 			if(buffer[j]==0) { 
@@ -184,7 +186,9 @@ public class HeapFile {
 				break;
 			}
 		}
+		
 		writeRecordInBuffer (iRecord, buffer, index);
+		
 		buffer[index]=1;
 		BufferManager.getInstance().free(iPageId, true);
 		updateHeaderWithTakenSlot(iPageId);
@@ -266,7 +270,7 @@ public class HeapFile {
 	public ArrayList<PageId> getDataPagesId() throws IOException {
 		// TODO Auto-generated method stub
 		ArrayList<PageId> pages = new ArrayList<>();
-		PageId headerPage = new PageId(this.relation.getFileIdx(), 0);
+		PageId headerPage = new PageId(0,this.relation.getFileIdx());
 		byte buffer[] = BufferManager.getInstance().get(headerPage);
 		HeaderPageInfo hp = new HeaderPageInfo();
 		hp.readFromBuffer(buffer);

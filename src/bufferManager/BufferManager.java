@@ -43,12 +43,12 @@ public class BufferManager {
 		//boolean pageFound = false;
 		System.out.println("Taille bufferpool : " + bufferPool.size());
 		for(Frame f : bufferPool) {
-//			if((f.getPageId() == null)) {
-//				pageFound = true;
-//				f.incrementPinCount();
-//				System.out.println(f);
-//				return load(pid);
-//			}
+			if((f.getPageId() == null)) {
+				f.setId(pid);
+				f.incrementPinCount();
+				System.out.println(f);
+				return f.getBuffer();
+			}
 			if(f.getPageId() != null) {
 				if((f.getPageId().getPageIdx() == pid.getPageIdx() && f.getPageId().getFileIdx() == pid.getFileIdx())) {
 					//pageFound = true;
@@ -63,10 +63,15 @@ public class BufferManager {
 		if(bufferPool.get(indice).getDirty())
 		{
 			DiskManager.getInstance().writePage(bufferPool.get(indice).getPageId(), bufferPool.get(indice).getBuffer());
+			bufferPool.get(indice).setDirtyFlag(false);
 		}
+		bufferPool.set(indice, new Frame());
 		bufferPool.get(indice).setId(pid);
+		
 		bufferPool.get(indice).incrementPinCount();
-		DiskManager.getInstance().writePage(bufferPool.get(indice).getPageId(), bufferPool.get(indice).getBuffer());
+		//bufferPool.get(indice).setBuffer(new byte[Constantes.pageSize]);
+		System.out.println("BufferManager get(pid) pid = " + pid);
+		DiskManager.getInstance().readPage(bufferPool.get(indice).getPageId(), bufferPool.get(indice).getBuffer());
 		
 		return bufferPool.get(indice).getBuffer();
 	}
