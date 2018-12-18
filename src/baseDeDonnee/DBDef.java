@@ -107,7 +107,7 @@ public class DBDef implements Serializable{
 						DBDef temp = (DBDef) obj; 
 						this.setCompteurRelations(temp.getCompteurRelations());
 						this.setListeRelations(temp.getListeRelations());
-						System.out.println("Fichier trouve");
+						//System.out.println("Fichier trouve");
 					}
 				} catch (EOFException msg) {
 					msg.printStackTrace();
@@ -119,10 +119,10 @@ public class DBDef implements Serializable{
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			} 
-			System.out.println(compteurRelations);
-			for (RelDef relDef : listeRelations) {
+			//System.out.println(compteurRelations);
+			/*for (RelDef relDef : listeRelations) {
 				System.out.println(relDef.getFileIdx() + " " + relDef.getNomRelation());
-			}
+			}*/
 		} else {
 		return;
 		}

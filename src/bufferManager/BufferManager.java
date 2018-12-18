@@ -46,7 +46,7 @@ public class BufferManager {
 			for (int i = 0; i < Constantes.frameCount; i++) {
 				bufferPool.add(new Frame());
 			}
-			System.out.println("Taille bufferPool : "+bufferPool.size());
+			//System.out.println("Taille bufferPool : "+bufferPool.size());
 		}
 		return INSTANCE; 
 	}
@@ -59,7 +59,7 @@ public class BufferManager {
 	 */
 	public byte[] get(PageId pid) throws IOException {
 		//boolean pageFound = false;
-		System.out.println("Taille bufferpool : " + bufferPool.size());
+		//System.out.println("Taille bufferpool : " + bufferPool.size());
 		for(Frame f : bufferPool) {
 			if((f.getPageId() == null)) {
 				f.setId(pid);
@@ -119,8 +119,8 @@ public class BufferManager {
 	 * @param dirty le dirtyFlag nous disant si la page a ete modifiee ou pas
 	 */
 	public void free(PageId pid, boolean dirty) {
-		System.out.println("Taille bufferPool : " + bufferPool.size());
-		System.out.println("Contenu bufferPool : " + bufferPool);
+		//System.out.println("Taille bufferPool : " + bufferPool.size());
+		//System.out.println("Contenu bufferPool : " + bufferPool);
 		for(Frame f : bufferPool) {
 			if(pid.equals(f.getPageId())) {
 				f.decrementPinCount();

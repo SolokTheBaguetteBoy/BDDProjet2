@@ -131,12 +131,13 @@ public class FileManager {
 	}
 	
 	/**
-	 * 
-	 * @param nomRelation1
-	 * @param nomRelation2
-	 * @param indiceCol1
-	 * @param indiceCol2
-	 * @return
+	 * Fonction generant une liste de record a afficher parmis les tables donnees.
+	 * Prends les records ou les valeurs des colonnes indiquees pour chaque table est la meme
+	 * @param nomRelation1 nom de la premiere table
+	 * @param nomRelation2 nom de la deuxieme table
+	 * @param indiceCol1 indice de la colonne du join dans la premiere table
+	 * @param indiceCol2 indice de la colonne du join dans la deuxieme table
+	 * @return Liste des records a affiche
 	 * @throws IOException
 	 */
 	public ArrayList<Record> join(String nomRelation1, String nomRelation2, int indiceCol1, int indiceCol2) throws IOException {

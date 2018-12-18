@@ -82,6 +82,7 @@ public class DBManager {
 				types.add(splitCommand[i]);
 			}
 			createRelation(splitCommand[1], Integer.parseInt(splitCommand[2]), types);
+			System.out.println("Creation de la table " + splitCommand[1] + " effectuee");
 			break;
 			
 		case "insert":
@@ -91,6 +92,7 @@ public class DBManager {
 				valeurs.add(splitCommand[i]);
 			}
 			insertRelation(splitCommand[1], valeurs);
+			System.out.println("Insertion effectuée dans la table " + splitCommand[1]);
 			break;
 			
 		case "clean":
@@ -118,7 +120,7 @@ public class DBManager {
 			break;
 		case "selectall":
 			List<Record> records = FileManager.getInstance().getAllRecords(splitCommand[1]);
-			System.err.println(records);
+			//System.err.println(records);
 			for (Record record : records) {
 				System.out.println(record);
 			}
