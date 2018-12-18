@@ -10,17 +10,29 @@ import java.util.List;
 import bufferManager.BufferManager;
 import headerPageInfo.CoupleEntiers;
 import headerPageInfo.HeaderPageInfo;
-
+/**
+ * 
+ * Décrit l'organisation d'une page mémoire
+ *
+ */
 public class HeapFile {
 
 	private RelDef relation;
 
-
+	/**
+	 * Constructeur
+	 * @param relation
+	 */
 	public HeapFile(RelDef relation) {
 		// TODO Auto-generated constructor stub
 		this.relation = relation;
 	}
-
+	
+	/**
+	 * Crée une nouvelle HeaderPage correspondant à l'id du file sur le disque
+	 * @param iFileIdx -> l'id du file
+	 * @throws IOException
+	 */
 	public void createNewOnDisk(int iFileIdx) throws IOException
 	{
 		HeaderPageInfo header = new HeaderPageInfo();
@@ -32,7 +44,12 @@ public class HeapFile {
 		System.out.println("pid = " + pid.getPageIdx());
 		BufferManager.getInstance().free(pid, true);	
 	}
-
+	
+	/**
+	 * Recherche une page de disponible (qui possède au moins un slot de libre)
+	 * @param oPageId -> la page trouvée
+	 * @throws IOException
+	 */
 	public void getFreePageId(PageId oPageId) throws IOException
 	{	
 		PageId header = new PageId(0,relation.getFileIdx());
@@ -84,7 +101,12 @@ public class HeapFile {
 			
 			
 	}
-
+	
+	/**
+	 * Actualise l'HeaderPage après occupation d'un des slots par une page
+	 * @param iPageId L'id de la page qui occupe le slot du header
+	 * @throws IOException
+	 */
 	public void updateHeaderWithTakenSlot(PageId iPageId) throws IOException
 	{
 		PageId header = new PageId(0,relation.getFileIdx());
@@ -103,13 +125,21 @@ public class HeapFile {
 		BufferManager.getInstance().free(header,true);
 
 	}
-
-	public RelDef getListe() {
+	
+	/**
+	 * Getter de la relation de la HeapFile
+	 * @return retourne la relation 
+	 */
+	public RelDef getRelation() {
 		return relation;
 	}
-
-	public void setListe(RelDef liste) {
-		this.relation = liste;
+	
+	/**
+	 * Setter de la relation de la HeapFile
+	 * @param liste
+	 */
+	public void setListe(RelDef relation) {
+		this.relation = relation;
 	}
 
 	/** 
@@ -165,7 +195,7 @@ public class HeapFile {
 	}
 
 	/** 
-	 * 	Méthode qui prend en argument un Record IRecord et un PageId iPageId et qui retourne un Rid
+	 * 	Détermine l'identifiant du Record à insérer
 	 *  @param iRecord de type Record
 	 *  @param iPageId de type PageId
 	 *  @return un Rid
@@ -195,6 +225,12 @@ public class HeapFile {
 		return (new Rid(iPageId,index));
 	}
 	
+	/**
+	 * Renvoie l'identifiant du Record à insérer dans la page après avoir déterminé la page où écrire
+	 * @param iRecord -> Record à insérer
+	 * @return L'identifiant du Record
+	 * @throws IOException
+	 */
 	public Rid insertRecord(Record iRecord) throws IOException
 	{
 		PageId tempPage =  new PageId();
@@ -203,12 +239,22 @@ public class HeapFile {
 		return this.insertRecordInPage(iRecord,tempPage);
 		
 	}
-
+	
+	/**
+	 * Retourne la relation de la HeapFile
+	 * @return
+	 */
 	public RelDef getRelDef()
 	{
 		return this.relation;
 	}
-
+	
+	/**
+	 * Lecture du record depuis le buffer
+	 * @param buffer -> Buffer fourni
+	 * @param slotIdx -> slot nécessaire à déterminer la position depuis la bytemap
+	 * @return
+	 */
 	public Record readRecordFromBuffer(byte[] buffer, int slotIdx) {
 		//System.out.println("SlotIdx recordFromBuffer : " + slotIdx);
 		int position = this.relation.getSlotCount()+(slotIdx*relation.getRecordSize());
@@ -246,7 +292,12 @@ public class HeapFile {
 		return result;
 	}
 
-
+	/**
+	 * Fournit tous les records de la page
+	 * @param pid PageId
+	 * @return Liste des records
+	 * @throws IOException
+	 */
 	public List<Record> getRecordsOnPage(PageId pid) throws IOException {
 		// TODO Auto-generated method stub
 		//System.out.println("getRecordsOnPage : "+ pid);
@@ -267,6 +318,11 @@ public class HeapFile {
 		return "HeapFile [relation=" + relation + "]";
 	}
 
+	/**
+	 * Fournit toutes les pages appartenant au HeapFile
+	 * @return la liste des pages
+	 * @throws IOException
+	 */
 	public ArrayList<PageId> getDataPagesId() throws IOException {
 		// TODO Auto-generated method stub
 		ArrayList<PageId> pages = new ArrayList<>();

@@ -9,7 +9,10 @@ import baseDeDonnee.PageId;
 import baseDeDonnee.Record;
 import baseDeDonnee.RelDef;
 import baseDeDonnee.Rid;
-
+/**
+ * Gestion des fichiers pour les records
+ *
+ */
 public class FileManager {
 
 	private static ArrayList<HeapFile> heapFileList;
@@ -31,13 +34,20 @@ public class FileManager {
 		
 		return INSTANCE;
 	}
-	
+	/**
+	 * Initialisation du FileManager
+	 */
 	public void init() {
 		for(RelDef rd : DBDef.getInstance().getListeRelations()) {
 			heapFileList.add(new HeapFile(rd));
 		}
 	}
 	
+	/**
+	 * Création d'une HeapFile pour l'insérer ensuite dans la liste des heapfiles
+	 * @param rd RelDef pour le nouveau HeapFile
+	 * @throws IOException
+	 */
 	public void createNewHeapFile(RelDef rd) throws IOException {
 		//System.err.println("Relations : " + heapFileList);
 		HeapFile createdHeapFile = new HeapFile(rd);
@@ -46,9 +56,17 @@ public class FileManager {
 
 	}
 	
+	/**
+	 * Insère le record dans une des relations de la HeapFile
+	 * @param RelationName -> Nom de la relation
+	 * @param Record -> Le record à insérer
+	 * @return
+	 * @throws IOException
+	 */
+	
 	public Rid insertRecordInRelation(String RelationName, Record Record) throws IOException {
 		for(HeapFile hp : heapFileList) {
-			if(hp.getListe().getNomRelation().equals(RelationName)) {
+			if(hp.getRelation().getNomRelation().equals(RelationName)) {
 				return hp.insertRecord(Record);
 			}
 		}
