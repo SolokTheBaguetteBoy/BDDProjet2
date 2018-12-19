@@ -52,7 +52,7 @@ public class BufferManager {
 	}
 	
 	/**
-	 * Recupere la page voulue
+	 * Renvoie le buffer du contenu d'une page souhaitée
 	 * @param pid PageId de la page demandee par l'utilisateur
 	 * @return Byte[] Buffer rempli avec la page demandee
 	 * @throws IOException

@@ -10,6 +10,7 @@ import java.util.List;
 import bufferManager.BufferManager;
 import headerPageInfo.CoupleEntiers;
 import headerPageInfo.HeaderPageInfo;
+import util.Constantes;
 /**
  * 
  * Décrit l'organisation d'une page mémoire
@@ -77,7 +78,7 @@ public class HeapFile {
 			}
 		}	
 			//System.err.println("  add page");
-			DiskManager.getInstance().addPage(oPageId.getFileIdx(), oPageId);
+			DiskManager.getInstance().addPage(this.relation.getFileIdx(), oPageId);
 //			System.out.println("nouvele page" + oPageId);
 //			System.out.println("apres appel nouvele page");
 //			System.out.println("apres appel frame1 : " + BufferManager.getInstance().getFrame1());
@@ -303,6 +304,19 @@ public class HeapFile {
 		//System.out.println("getRecordsOnPage : "+ pid);
 		List<Record> listeRecords = new ArrayList<>();
 		byte buffer[] = BufferManager.getInstance().get(pid);
+		boolean zeros = true;
+		for(byte b : buffer)
+		{
+			if(b != 0)
+			{
+				zeros = false;
+				break;
+			}
+		}
+		if(zeros)
+			DiskManager.getInstance().readPage(pid, buffer);
+		//byte buffer[] = new byte[Constantes.pageSize];
+		
 		for (int i = 0; i < this.relation.getSlotCount(); i++) {
 			if(buffer[i] == 1)//on vérifie si le slot n'est pas 0 (si le slot n'est pas vide)
 			{
@@ -328,6 +342,17 @@ public class HeapFile {
 		ArrayList<PageId> pages = new ArrayList<>();
 		PageId headerPage = new PageId(0,this.relation.getFileIdx());
 		byte buffer[] = BufferManager.getInstance().get(headerPage);
+		boolean zeros = true;
+		for(byte b : buffer)
+		{
+			if(b != 0)
+			{
+				zeros = false;
+				break;
+			}
+		}
+		if(zeros)
+			DiskManager.getInstance().readPage(headerPage, buffer);
 		HeaderPageInfo hp = new HeaderPageInfo();
 		hp.readFromBuffer(buffer);
 		for(CoupleEntiers c : hp.getCouplesEntier())
